@@ -1,0 +1,71 @@
+.edit {
+   border: 1px solid var(--primary-color);
+   margin-bottom: 30px;
+   width: 598px;
+   background: gray;
+   box-sizing: content-box;
+   border-radius: 16px;
+   height: 450px;
+
+   form {
+      input:focus,
+      textarea:focus {
+         outline: none;
+      }
+
+      button {
+         font-size: 16px;
+         background: var(--secondary-color);
+         border: none;
+         padding: 10px 20px;
+         border-radius: 10px;
+         cursor: pointer;
+         width: 150px;
+      }
+
+      .edit__username {
+         width: 300px;
+         border: 1px solid var(--second-dark);
+         background: var(--primary-color);
+         color: var(--secondary-color);
+         padding: 5px 20px;
+         margin-bottom: 10px;
+         font-size: 20px;
+         border-radius: 10px;
+         box-shadow: inset 0 0 18px #3d3d3d;
+      }
+
+      .edit__description {
+         width: 350px;
+         height: 92px;
+         border: 1px solid var(--second-dark);
+         background: var(--primary-color);
+         color: var(--secondary-color);
+         padding: 13px 20px;
+         border-radius: 10px;
+         font-size: 18px;
+         resize: none;
+         margin-bottom: 10px;
+         font-family: "Arial", sans-serif;
+         box-shadow: inset 0 0 18px #3d3d3d;
+      }
+   }
+
+   .topBanner {
+      height: 220px;
+      border-radius: 15px 15px 0 0;
+      background: gray;
+      z-index: 0;
+   }
+
+   .botBanner {
+      padding: 15px 100px 0 190px;
+      font-size: 28px;
+      display: flex;
+      justify-content: space-between;
+      height: 230px;
+      z-index: 10;
+      border-radius: 15px;
+      background: var(--light-dark);
+   }
+}

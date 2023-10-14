@@ -1,0 +1,17 @@
+.messages {
+   width: 1000px;
+   height: 850px;
+   background-color: var(--light-dark);
+   border-radius: 15px;
+   border: 1px solid var(--primary-color);
+   display: flex;
+
+   &__users {
+      width: 350px;
+      border-right: 1px solid var(--primary-color);
+   }
+
+   &__chats {
+      width: 650px;
+   }
+}

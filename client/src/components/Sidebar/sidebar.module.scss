@@ -1,0 +1,33 @@
+.sidebar {
+   transform: translateY(0);
+   position: sticky;
+   top: calc(65px + 30px);
+   left: 0;
+   right: 100px;
+   box-sizing: content-box;
+   display: inline-block;
+   transition: all 0.25s ease;
+
+   .icon {
+      color: var(--blue-icon);
+   }
+
+   .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.1s;
+      padding: 10px 30px;
+      border-radius: 10px;
+      font-size: 20px;
+      cursor: pointer;
+
+      &:hover {
+         background: var(--light-dark);
+      }
+   }
+}
+
+.sidebar__scrolled {
+   transform: translateY(-150%);
+}

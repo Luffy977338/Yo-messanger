@@ -1,0 +1,30 @@
+.like {
+   background: var(--primary-color);
+   display: inline-flex;
+   cursor: pointer;
+   justify-content: center;
+   padding: 6px 18px;
+   border-radius: 30px;
+   margin-top: 40px;
+   transition: all 0.2s;
+
+   .wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      p {
+         font-size: 18px;
+         font-family: "Arial", sans-serif;
+      }
+   }
+
+   &__filled,
+   &__outlined {
+      font-size: 22px;
+   }
+}
+
+.like__active {
+   background: #dc2f2f;
+}

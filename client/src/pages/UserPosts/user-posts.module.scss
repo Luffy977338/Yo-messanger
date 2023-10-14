@@ -1,0 +1,17 @@
+@import "../../color-variables.scss";
+
+.loader__wrap {
+   width: 1000px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.user {
+   .userPosts {
+      width: 600px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: content-box;
+   }
+}

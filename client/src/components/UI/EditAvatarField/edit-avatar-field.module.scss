@@ -1,0 +1,39 @@
+.avatar {
+   position: absolute;
+   transform: translateY(-76px) translateX(15px);
+   width: 152px;
+   height: 152px;
+   border-radius: 50%;
+   cursor: pointer;
+   border: 30px solid transparent;
+   z-index: 5;
+}
+
+.changeAvatarOptions {
+   position: absolute;
+   z-index: 6;
+   margin-top: 55px;
+   margin-left: 10px;
+   border-radius: 15px;
+   width: 170px;
+   background: var(--primary-color);
+
+   &__delete,
+   &__change {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+         background: var(--link-hover);
+      }
+   }
+
+   &__delete {
+      border-radius: 0 0 15px 15px;
+   }
+
+   &__change {
+      border-radius: 15px 15px 0 0;
+   }
+}

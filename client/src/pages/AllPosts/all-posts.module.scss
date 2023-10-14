@@ -1,0 +1,10 @@
+.all {
+   width: 1000px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   .allPosts {
+      display: flex;
+      flex-direction: column;
+   }
+}

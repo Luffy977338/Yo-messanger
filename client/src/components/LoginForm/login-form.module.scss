@@ -1,0 +1,55 @@
+.login__form {
+   text-align: center;
+
+   .auth__types {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-around;
+      position: relative;
+      overflow: hidden;
+
+      .auth__button_background {
+         position: absolute;
+         width: 220px;
+         margin: 0 20px;
+         top: 0;
+         left: 0;
+         border-radius: 10px;
+         border: 1px solid transparent;
+         height: 33px;
+         z-index: -1;
+         padding: 0 10px;
+         background: var(--primary-color);
+         transition: all 0.2s ease;
+      }
+
+      .auth__button_backgroundSecond {
+         width: 220px;
+         left: 240px;
+      }
+
+      .auth__button_login {
+         font-size: 18px;
+         border: 1px solid var(--primary-color);
+         padding: 5px 10px;
+         border-radius: 10px;
+         background: transparent;
+         color: var(--secondary-color);
+         width: 220px;
+         margin: 0 20px;
+         cursor: pointer;
+      }
+
+      .auth__button_register {
+         width: 220px;
+         border: 1px solid var(--primary-color);
+         padding: 5px 10px;
+         background: transparent;
+         border-radius: 10px;
+         color: var(--secondary-color);
+         font-size: 18px;
+         margin-right: 20px;
+         cursor: pointer;
+      }
+   }
+}
