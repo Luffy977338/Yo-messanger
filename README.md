@@ -30,14 +30,9 @@ before start backend add .env file
 
 ```
 PORT=5000
-SOCKET_PORT=80
 DB_URL=**your mongodb url like mongodb+srv://admin:admin123456@cluster0.mypsuss.mongodb.net/?retryWrites=true&w=majority**
 JWT_ACCESS_SECRET=jwt-secret-key
 JWT_REFRESH_SECRET=jwt-refresh-secret-key
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=**your gmail**
-SMTP_PASSWORD=**disposable gmail password like eoisetvwjxgxkfgs**
 API_URL=http://localhost:5000
 CLIENT_URL=http://localhost:3000
 ```
