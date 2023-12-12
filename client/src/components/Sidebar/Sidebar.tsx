@@ -9,76 +9,64 @@ import { TbMessageCircle2 } from "react-icons/tb";
 import { observer } from "mobx-react-lite";
 
 const Sidebar = () => {
-   const [prevScrollPos, setPrevScrollPos] = React.useState(0);
-   const [headerVisible, setHeaderVisible] = React.useState(true);
+  const [prevScrollPos, setPrevScrollPos] = React.useState(0);
+  const [headerVisible, setHeaderVisible] = React.useState(true);
 
-   const handleScroll = () => {
-      const currentScrollPos = window.scrollY;
-      setHeaderVisible(currentScrollPos < prevScrollPos);
-      setPrevScrollPos(currentScrollPos);
-   };
+  const handleScroll = () => {
+    const currentScrollPos = window.scrollY;
+    setHeaderVisible(currentScrollPos < prevScrollPos);
+    setPrevScrollPos(currentScrollPos);
+  };
 
-   React.useEffect(() => {
-      window.addEventListener("scroll", handleScroll);
-      return () => {
-         window.removeEventListener("scroll", handleScroll);
-      };
-   }, [prevScrollPos]);
-   const path = useNavigate();
+  React.useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [prevScrollPos]);
+  const path = useNavigate();
 
-   return (
-      <nav
-         className={[
-            st.sidebar,
-            headerVisible ? "" : st.sidebar__scrolled,
-         ].join(" ")}
+  return (
+    <nav
+      className={[st.sidebar, headerVisible ? "" : st.sidebar__scrolled].join(
+        " ",
+      )}
+    >
+      <div
+        className={st.option}
+        onClick={() => {
+          path(`/${user.user._id}`);
+        }}
       >
-         <div
-            className={st.option}
-            onClick={() => {
-               path(`/${user.user._id}`);
-            }}
-         >
-            <div className={st.icon}>
-               <BiUserCircle />
-            </div>
-            Мой профиль
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path("/posts");
-            }}
-         >
-            <div className={st.icon}>
-               <HiOutlineNewspaper />
-            </div>
-            Новости
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path("/messages");
-            }}
-         >
-            <div className={st.icon}>
-               <TbMessageCircle2 />
-            </div>
-            Сообщения
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path(`/friends/${user.user._id}`);
-            }}
-         >
-            <div className={st.icon}>
-               <FaUserFriends />
-            </div>
-            Друзья
-         </div>
-      </nav>
-   );
+        <div className={st.icon}>
+          <BiUserCircle />
+        </div>
+        Мой профиль
+      </div>
+      <div
+        className={st.option}
+        onClick={() => {
+          path("/posts");
+        }}
+      >
+        <div className={st.icon}>
+          <HiOutlineNewspaper />
+        </div>
+        Новости
+      </div>
+      <div
+        className={st.option}
+        onClick={() => {
+          path(`/friends/${user.user._id}`);
+        }}
+      >
+        <div className={st.icon}>
+          <FaUserFriends />
+        </div>
+        Друзья
+      </div>
+    </nav>
+  );
 };
 
 export default observer(Sidebar);

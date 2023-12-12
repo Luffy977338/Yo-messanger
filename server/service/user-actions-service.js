@@ -6,126 +6,111 @@ const fileService = require("./file-service");
 const path = require("path");
 
 class UserActionsService {
-   async editProfile(id, username, description, avatar, prevAvatar) {
-      let updatedFields = {};
+  async editProfile(id, username, description, avatar, prevAvatar) {
+    let updatedFields = {};
 
-      if (!username && !description) {
-         throw ApiError.BadRequest("Нет информации");
+    if (!username && !description) {
+      throw ApiError.BadRequest("Нет информации");
+    }
+
+    if (username.includes(" ")) {
+      throw ApiError.BadRequest("Имя не должно содержать пробелов");
+    }
+
+    updatedFields.username = username;
+    updatedFields.description = description;
+
+    if (avatar) {
+      const avatarExt = path.extname(avatar.name);
+      if (avatarExt !== ".png" && avatarExt !== ".jpg") {
+        throw ApiError.BadRequest("Формат файла не поддерживается");
+      } else {
+        const avatarFile = fileService.saveFile(avatar);
+        updatedFields.avatar = avatarFile;
       }
-
-      if (username.includes(" ")) {
-         throw ApiError.BadRequest("Имя не должно содержать пробелов");
+      if (prevAvatar) {
+        fileService.deleteFile(
+          prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
+        );
       }
-
-      updatedFields.username = username;
-      updatedFields.description = description;
-
-      if (avatar) {
-         const avatarExt = path.extname(avatar.name);
-         if (avatarExt !== ".png" && avatarExt !== ".jpg") {
-            throw ApiError.BadRequest("Формат файла не поддерживается");
-         } else {
-            const avatarFile = fileService.saveFile(avatar);
-            updatedFields.avatar = avatarFile;
-         }
-         if (prevAvatar) {
-            fileService.deleteFile(
-               prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
-            );
-         }
-      } else if (!avatar) {
-         if (prevAvatar) {
-            fileService.deleteFile(
-               prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
-            );
-            const avatarPath = path.join(
-               __dirname,
-               "images",
-               "default-user-avatar.jpg",
-            );
-            updatedFields.avatar = path.basename(avatarPath);
-         }
+    } else if (!avatar) {
+      if (prevAvatar) {
+        fileService.deleteFile(
+          prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
+        );
+        const avatarPath = path.join(
+          __dirname,
+          "images",
+          "default-user-avatar.jpg",
+        );
+        updatedFields.avatar = path.basename(avatarPath);
       }
+    }
 
-      const newUser = await userModel.findByIdAndUpdate(id, updatedFields, {
-         new: true,
-      });
+    const newUser = await userModel.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+    });
 
-      const userDto = new UserDto(newUser);
+    const userDto = new UserDto(newUser);
 
-      return userDto;
-   }
+    return userDto;
+  }
 
-   async likePost(postId, userId) {
-      if (!postId || !userId) {
-         throw ApiError.NotFound("Пост или пользователь не найден");
-      }
+  async likePost(postId, userId) {
+    if (!postId || !userId) {
+      throw ApiError.NotFound("Пост или пользователь не найден");
+    }
 
-      const post = await postModel
-         .findByIdAndUpdate(
-            postId,
-            {
-               $addToSet: { likes: userId },
-            },
-            { new: true },
-         )
-         .populate("likes")
-         .populate("userCreator");
+    const post = await postModel
+      .findByIdAndUpdate(
+        postId,
+        {
+          $addToSet: { likes: userId },
+        },
+        { new: true },
+      )
+      .populate("likes")
+      .populate("userCreator");
 
-      return post;
-   }
+    return post;
+  }
 
-   async removeLikePost(postId, userId) {
-      if (!postId || !userId) {
-         throw ApiError.NotFound("Пост или пользователь не найден");
-      }
+  async removeLikePost(postId, userId) {
+    if (!postId || !userId) {
+      throw ApiError.NotFound("Пост или пользователь не найден");
+    }
 
-      const post = await postModel
-         .findByIdAndUpdate(
-            postId,
-            {
-               $pull: { likes: userId },
-            },
-            { new: true },
-         )
-         .populate("likes")
-         .populate("userCreator");
+    const post = await postModel
+      .findByIdAndUpdate(
+        postId,
+        {
+          $pull: { likes: userId },
+        },
+        { new: true },
+      )
+      .populate("likes")
+      .populate("userCreator");
 
-      return post;
-   }
+    return post;
+  }
 
-   async getOneUser(id) {
-      if (!id) {
-         throw ApiError.BadRequest("id не указан");
-      }
+  async getOneUser(id) {
+    if (!id) {
+      throw ApiError.BadRequest("id не указан");
+    }
 
-      const user = await userModel
-         .findById(id)
-         .populate({
-            path: "friends subscriptions subscribers posts",
-         })
-         .populate({
-            path: "recentChatUsers",
-            populate: [
-               { path: "user lastMessage" },
-               {
-                  path: "lastMessage",
-                  populate: "messageCreator",
-               },
-            ],
-            options: {
-               sort: { "lastMessage.createdAt": -1 }, // Сортировка recentChatUsers
-            },
-         });
+    const user = await userModel.findById(id).populate({
+      path: "friends subscriptions subscribers posts",
+    });
 
-      if (!user) {
-         throw ApiError.NotFound("Такого пользователя нет");
-      }
+    if (!user) {
+      throw ApiError.NotFound("Такого пользователя нет");
+    }
 
-      const userDto = new UserDto(user);
+    const userDto = new UserDto(user);
 
-      return userDto;
-   }
+    return userDto;
+  }
 }
 
 module.exports = new UserActionsService();
