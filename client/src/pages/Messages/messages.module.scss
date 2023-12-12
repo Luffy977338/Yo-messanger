@@ -1,4 +1,4 @@
-.messages {
+.chat {
    width: 1000px;
    height: 850px;
    background-color: var(--light-dark);
@@ -6,12 +6,11 @@
    border: 1px solid var(--primary-color);
    display: flex;
 
-   &__users {
-      width: 350px;
-      border-right: 1px solid var(--primary-color);
-   }
-
-   &__chats {
+   &__messages {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 850px;
       width: 650px;
    }
 }

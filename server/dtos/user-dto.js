@@ -7,7 +7,8 @@ module.exports = class UserDto {
    friends;
    subscriptions;
    description;
-   posts
+   posts;
+   recentChatUsers;
 
    constructor(model) {
       this.avatar = model.avatar;
@@ -19,6 +20,7 @@ module.exports = class UserDto {
       this.friends = model.friends;
       this.subscriptions = model.subscriptions;
       this.subscribers = model.subscribers;
-      this.posts = model.posts
+      this.posts = model.posts;
+      this.recentChatUsers = model.recentChatUsers;
    }
 };

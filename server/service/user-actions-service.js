@@ -95,15 +95,31 @@ class UserActionsService {
    }
 
    async getOneUser(id) {
+      if (!id) {
+         throw ApiError.BadRequest("id не указан");
+      }
+
       const user = await userModel
          .findById(id)
-         .populate("friends")
-         .populate("subscriptions")
-         .populate("subscribers")
-         .populate("posts");
+         .populate({
+            path: "friends subscriptions subscribers posts",
+         })
+         .populate({
+            path: "recentChatUsers",
+            populate: [
+               { path: "user lastMessage" },
+               {
+                  path: "lastMessage",
+                  populate: "messageCreator",
+               },
+            ],
+            options: {
+               sort: { "lastMessage.createdAt": -1 }, // Сортировка recentChatUsers
+            },
+         });
 
       if (!user) {
-         throw ApiError.BadRequest("Такого пользователя нет");
+         throw ApiError.NotFound("Такого пользователя нет");
       }
 
       const userDto = new UserDto(user);

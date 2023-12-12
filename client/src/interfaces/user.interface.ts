@@ -1,3 +1,4 @@
+import { IMessage } from "./message.interface";
 import { IPost } from "./post.interface";
 
 export interface IUser {
@@ -11,4 +12,5 @@ export interface IUser {
    subscriptions: IUser[];
    subscribers: IUser[];
    posts: IPost[];
+   recentChatUsers: { user: IUser; lastMessage: IMessage };
 }

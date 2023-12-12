@@ -1,0 +1,70 @@
+.banner {
+   padding: 20px;
+
+   &__header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+
+      &_newMessage {
+         font-size: 20px;
+      }
+
+      &_user {
+         color: var(--blue-icon);
+         font-size: 20px;
+         cursor: pointer;
+
+         &:hover {
+            text-decoration: underline;
+         }
+      }
+   }
+
+   &__main {
+      &_user {
+         display: flex;
+         align-items: center;
+         gap: 7px;
+
+         img {
+            border-radius: 50%;
+            width: 62px;
+            height: 62px;
+         }
+
+         p {
+            font-size: 20px;
+         }
+      }
+   }
+
+   &__form {
+      &_input {
+         resize: none;
+         height: 200px;
+         outline: none;
+         font-family: "Arial", sans-serif;
+         border: 1px solid var(--primary-color);
+         background: var(--light-dark);
+         width: 500px;
+         color: var(--secondary-color);
+         font-size: 18px;
+         margin: 15px 0;
+         border-radius: 10px;
+         padding: 10px;
+      }
+
+      &_button {
+         padding: 10px 10px;
+         font-size: 16px;
+         cursor: pointer;
+         border-radius: 15px;
+      }
+   }
+
+   hr {
+      margin: 20px 0;
+      border: 1px solid grey;
+   }
+}

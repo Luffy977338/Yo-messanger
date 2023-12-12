@@ -79,7 +79,7 @@ const EditProfile = () => {
                   }
                   maxLength={100}
                   placeholder='Описание...'
-               ></textarea>
+               />
                <button disabled={editProfileMutation.isLoading}>
                   {editProfileMutation.isLoading ? "Сохранение" : "Сохранить"}
                </button>

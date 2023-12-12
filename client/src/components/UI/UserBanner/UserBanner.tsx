@@ -3,8 +3,11 @@ import { API_URL } from "../../../http";
 import Friendship from "../../Friendship/Friendship";
 import user from "../../../store/user";
 import { observer } from "mobx-react-lite";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IUser } from "../../../interfaces/user.interface";
+import React from "react";
+import Modal from "../Modal/Modal";
+import SendMessageByBanner from "../../SendMessageByBanner/SendMessageByBanner";
 
 interface UserBannerProps {
    userCreator: IUser;
@@ -12,7 +15,13 @@ interface UserBannerProps {
 }
 
 const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
+   const [isClicked, setIsClicked] = React.useState(false);
    const path = useNavigate();
+   const location = useLocation();
+
+   React.useEffect(() => {
+      setIsClicked(false);
+   }, [location.pathname]);
    return (
       <div className={st.banner}>
          <div className={st.banner__header}></div>
@@ -60,7 +69,10 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
                   ) : (
                      <div className={st.options}>
                         <div>
-                           <button className={st.options__text}>
+                           <button
+                              onClick={() => setIsClicked((prev) => !prev)}
+                              className={st.options__text}
+                           >
                               Написать
                            </button>
                         </div>
@@ -70,6 +82,16 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
                </>
             )}
          </div>
+         {isClicked ? (
+            <Modal setVisible={setIsClicked} visible={isClicked}>
+               <SendMessageByBanner
+                  setIsClicked={setIsClicked}
+                  userCreator={userCreator}
+               />
+            </Modal>
+         ) : (
+            ""
+         )}
       </div>
    );
 };

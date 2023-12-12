@@ -63,9 +63,11 @@ class UserActionsController {
    async getOneUser(req, res, next) {
       try {
          const id = req.params.id;
-         const page = req.query.page;
-         const perPage = 8;
-         const user = await userActionsService.getOneUser(id, perPage, page);
+         console.log(id);
+         if (!id) {
+            throw ApiError.BadRequest("id не указан");
+         }
+         const user = await userActionsService.getOneUser(id);
 
          return res.json(user);
       } catch (e) {

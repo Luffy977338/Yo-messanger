@@ -1,0 +1,38 @@
+.messages {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+
+.messages__scroll {
+   overflow: auto;
+   height: 735px;
+   padding-bottom: 10px;
+
+   &::-webkit-scrollbar-track {
+      background: var(--light-dark);
+   }
+
+   &::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+   }
+}
+
+.messages__scroll_invis {
+   overflow: auto;
+   height: 735px;
+   padding-bottom: 10px;
+
+   &::-webkit-scrollbar-thumb {
+      background: var(--light-dark);
+   }
+
+   &::-webkit-scrollbar-track {
+      background: var(--light-dark);
+   }
+}
+
+.loader {
+   display: flex;
+   justify-content: center;
+}

@@ -1,34 +1,44 @@
-import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../http";
+import { IMessage } from "../../../interfaces/message.interface";
 import { IUser } from "../../../interfaces/user.interface";
+import user from "../../../store/user";
 import st from "./chat-user.module.scss";
-
-const ChatUser = ({ user }: { user: IUser }) => {
-   const path = useNavigate();
-
+const ChatUser = ({
+   chatUser,
+   lastMessage,
+}: {
+   chatUser: IUser;
+   lastMessage: IMessage | null;
+}) => {
    return (
-      <div
-         onClick={() => {
-            path(`/messages?user=${user._id}`);
-         }}
-         className={st.chatUser}
-      >
+      <>
          <div>
             <img
                className={st.chatUser__img}
-               src={`${API_URL}/${user.avatar}`}
+               src={`${API_URL}/${chatUser.avatar}`}
                alt=''
             />
          </div>
          <div className={st.chatUser__prevInfo}>
-            <div className={st.chatUser__username}>{user.username}</div>
+            <div className={st.chatUser__username}>{chatUser.username}</div>
 
             <div className={st.chatUser__prevMessage}>
-               message
-               {/* Сделать здесь отображение последнего сообщения */}
+               {`${
+                  lastMessage?.messageCreator.username === user.user.username
+                     ? "Вы"
+                     : lastMessage?.messageCreator.username
+                     ? lastMessage.messageCreator.username
+                     : "..."
+               }: ${
+                  lastMessage?.content
+                     ? lastMessage.content
+                     : lastMessage?.picture
+                     ? "Фотография"
+                     : ""
+               }`}
             </div>
          </div>
-      </div>
+      </>
    );
 };
 

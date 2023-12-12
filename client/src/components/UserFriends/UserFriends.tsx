@@ -42,7 +42,7 @@ const UserFriends = ({ id, username, isLoading }: UserFriendsProps) => {
                   {data?.friends?.length ? (
                      <div>
                         {data?.friends.map((sub: IUser, index: number) => {
-                           if (index < 4) {
+                           if (index < 3) {
                               return (
                                  <div
                                     onClick={() => {

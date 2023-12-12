@@ -13,22 +13,9 @@ import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
 
 const AllPosts = () => {
    const [queryKey, setQueryKey] = React.useState(["posts", Date.now()]);
-   async function fetchPosts({ pageParam = 0 }) {
-      const response = await $api.get(`/posts?page=${pageParam}`);
-      return response.data;
-   }
-
    React.useEffect(() => {
       setQueryKey(["posts", Date.now()]);
    }, []);
-
-   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-      useInfiniteQuery(queryKey, fetchPosts, {
-         getNextPageParam: (lastPage) => {
-            const { currentPage, totalPages } = lastPage.pagination;
-            return currentPage + 1 === totalPages ? false : currentPage + 1;
-         },
-      });
 
    useInfiniteQueryScrolling(
       document,
@@ -39,6 +26,19 @@ const AllPosts = () => {
       },
       1200,
    );
+
+   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+      useInfiniteQuery(queryKey, fetchPosts, {
+         getNextPageParam: (lastPage) => {
+            const { currentPage, totalPages } = lastPage.pagination;
+            return currentPage + 1 === totalPages ? false : currentPage + 1;
+         },
+      });
+
+   async function fetchPosts({ pageParam = 0 }) {
+      const response = await $api.get(`/posts?page=${pageParam}`);
+      return response.data;
+   }
 
    return (
       <div style={{ display: "flex" }}>

@@ -12,6 +12,12 @@ const UserSchema = new Schema({
    friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
    subscriptions: [{ type: Schema.Types.ObjectId, ref: "User" }],
    subscribers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+   recentChatUsers: [
+      {
+         user: { type: Schema.Types.ObjectId, ref: "User" },
+         lastMessage: { type: Schema.Types.ObjectId, ref: "Message" },
+      },
+   ],
 });
 
 module.exports = model("User", UserSchema);
