@@ -5,7 +5,6 @@ import st from "./sidebar.module.scss";
 import { BiUserCircle } from "react-icons/bi";
 import { HiOutlineNewspaper } from "react-icons/hi";
 import { FaUserFriends } from "react-icons/fa";
-import { TbMessageCircle2 } from "react-icons/tb";
 import { observer } from "mobx-react-lite";
 
 const Sidebar = () => {
