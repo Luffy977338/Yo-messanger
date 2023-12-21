@@ -6,27 +6,26 @@ const Router = require("express").Router;
 const router = new Router();
 
 router.patch(
-   "/edit/:id",
-   authMiddleware,
-   body(
-      "username",
-      "Длина ника должна составлять от 4 до 15 символов",
-   ).isLength({ min: 4, max: 15 }),
-   body("description", "Длина описания должна быть до 100 символов").isLength({
-      min: 0,
-      max: 100,
-   }),
-   userActionsController.editProfile,
+  "/edit/:id",
+  authMiddleware,
+  body("username", "Длина ника должна составлять от 4 до 15 символов").isLength(
+    { min: 4, max: 15 },
+  ),
+  body("description", "Длина описания должна быть до 100 символов").isLength({
+    min: 0,
+    max: 100,
+  }),
+  userActionsController.editProfile,
 );
 router.patch(
-   "/like/:postId/:userId",
-   authMiddleware,
-   userActionsController.likePost,
+  "/like/:postId/:userId",
+  authMiddleware,
+  userActionsController.likePost,
 );
 router.patch(
-   "/removeLike/:postId/:userId",
-   authMiddleware,
-   userActionsController.removeLikePost,
+  "/removeLike/:postId/:userId",
+  authMiddleware,
+  userActionsController.removeLikePost,
 );
 router.get("/:id", authMiddleware, userActionsController.getOneUser);
 

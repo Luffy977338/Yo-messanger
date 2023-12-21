@@ -12,21 +12,21 @@ const errorMiddleware = require("./middlewares/error-middleware.js");
 const userFriendshipRouter = require("./router/user-friendship-router.js");
 const userActionsRouter = require("./router/user-actions-router.js");
 const chatRouter = require("./router/chat-router.js");
-const chatModel = require("./models/chat-model.js");
-const messageModel = require("./models/message-model.js");
 const ApiError = require("./exceptions/api-error.js");
 const userModel = require("./models/user-model.js");
 const UserDto = require("./dtos/user-dto.js");
+const { ERROR } = require("./constants/ERROR.js");
+const chatService = require("./service/chat-service.js");
+const notificationsService = require("./service/notifications-service.js");
 
 const PORT = process.env.PORT || 5000;
-const SOCKET_PORT = process.env.SOCKET_PORT || 80;
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-   cors: {
-      origin: process.env.CLIENT_URL,
-   },
+  cors: {
+    origin: process.env.CLIENT_URL,
+  },
 });
 
 app.use(express.json());
@@ -34,10 +34,10 @@ app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.static("images"));
 app.use(
-   cors({
-      credentials: true,
-      origin: process.env.CLIENT_URL,
-   }),
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  }),
 );
 app.use("/auth", userAuthRouter);
 app.use("/posts", postsRouter);
@@ -49,155 +49,96 @@ app.use(errorMiddleware);
 const clients = {};
 
 io.on("connection", (socket) => {
-   console.log("Client connected");
-   socket.on("join", (roomId) => {
-      console.log(`join on ${roomId}`);
-      socket.join(roomId);
-   });
+  // console.log("Client connected");
+  socket.on("join", (roomId) => {
+    // console.log(`join on ${roomId}`);
+    socket.join(roomId);
+  });
 
-   socket.on(
-      "message",
-      async ({
-         roomId,
-         message = {
-            creatorId: null,
-            createdAt: null,
-            content: null,
-            picture: null,
-         },
-         messageToId,
-      }) => {
-         try {
-            console.log(`message on ${roomId}`);
-            if (!message.content && !message.picture) {
-               return ApiError.BadRequest("Сообщение не может быть пыстым");
-            }
-            const messageCreator = await userModel.findById(message.creatorId);
-            const messageCreatorDto = new UserDto(messageCreator);
+  socket.on("message", async ({ roomId, message, messageToId }) => {
+    try {
+      if (!message.content && !message.picture) {
+        return ApiError.BadRequest("Сообщение не может быть пыстым");
+      }
+      const messageCreator = await userModel.findById(message.creatorId);
+      const messageCreatorDto = new UserDto(messageCreator);
 
-            if (!messageCreator) {
-               return ApiError.NotFound("Такой пользователь не найден");
-            }
+      if (!messageCreator) {
+        return ApiError.NotFound(ERROR.userNotFound);
+      }
 
-            io.to(roomId).emit("newMessage", {
-               messageCreator: messageCreatorDto,
-               createdAt: message.createdAt,
-               content: message.content,
-               picture: message.picture,
-            });
+      io.to(roomId).emit("newMessage", {
+        messageCreator: messageCreatorDto,
+        createdAt: message.createdAt,
+        content: message.content,
+        picture: message.picture,
+      });
 
-            const newMessage = await messageModel.create({
-               messageCreator: messageCreatorDto,
-               createdAt: message.createdAt,
-               content: message.content,
-               picture: message.picture,
-            });
+      return chatService.sendMessage(
+        roomId,
+        messageCreatorDto,
+        message,
+        messageToId,
+      );
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  });
 
-            await chatModel.findOneAndUpdate(
-               { roomId: roomId },
-               { $addToSet: { messages: newMessage } },
-               { upsert: true },
-            );
+  socket.on("leave", (roomId) => {
+    socket.leave(roomId);
+    console.log(`leave from ${roomId}`);
+  });
 
-            const messageToUser = await userModel.findById(messageToId);
-            const messageToUserDto = new UserDto(messageToUser);
+  clients[socket.id] = socket;
 
-            const existingRecentChatUser = await userModel.findOne({
-               _id: message.creatorId,
-               "recentChatUsers.user": messageToUserDto._id,
-            });
+  socket.on("comment", async (commentedUserId, userId) => {
+    if (clients[commentedUserId]) {
+      clients[commentedUserId].emit("newNotification", {
+        userId,
+        type: "comment",
+      });
+    }
 
-            if (existingRecentChatUser) {
-               await userModel.updateOne(
-                  {
-                     _id: message.creatorId,
-                     "recentChatUsers.user": messageToUserDto._id,
-                  },
-                  {
-                     $set: {
-                        "recentChatUsers.$.lastMessage": newMessage,
-                     },
-                  },
-                  { new: true },
-               );
-            } else {
-               await userModel.findByIdAndUpdate(
-                  message.creatorId,
-                  {
-                     $addToSet: {
-                        recentChatUsers: {
-                           user: messageToUserDto,
-                           lastMessage: newMessage,
-                        },
-                     },
-                  },
-                  { upsert: true, new: true },
-               );
-            }
+    return notificationsService.newNotification(userId, "comment");
+  });
 
-            const existingRecentChatUserMessageTo = await userModel.findOne({
-               _id: messageToId,
-               "recentChatUsers.user": messageCreatorDto,
-            });
+  socket.on("like", async (likedUserId, userId) => {
+    if (clients[likedUserId]) {
+      clients[likedUserId].emit("newNotification", { userId, type: "like" });
+    }
 
-            if (existingRecentChatUserMessageTo) {
-               await userModel.updateOne(
-                  {
-                     _id: messageToId,
-                     "recentChatUsers.user": messageCreatorDto,
-                  },
-                  {
-                     $set: {
-                        "recentChatUsers.$.lastMessage": newMessage,
-                     },
-                  },
-               );
-            } else {
-               await userModel.findByIdAndUpdate(
-                  messageToId,
-                  {
-                     $addToSet: {
-                        recentChatUsers: {
-                           user: messageCreatorDto,
-                           lastMessage: newMessage,
-                        },
-                     },
-                  },
-                  { upsert: true, new: true },
-               );
-            }
-         } catch (e) {
-            console.log(e);
-         }
-      },
-   );
+    return notificationsService.newNotification(userId, "like");
+  });
 
-   socket.on("leave", (roomId) => {
-      socket.leave(roomId);
-      console.log(`leave from ${roomId}`);
-   });
+  socket.on("friendReq", async (potentialFriendUserId, userId) => {
+    if (clients[potentialFriendUserId]) {
+      clients[potentialFriendUserId].emit("newNotification", {
+        userId,
+        type: "friend",
+      });
+    }
 
-   clients[socket.id] = socket;
+    return notificationsService.newNotification(userId, "friend");
+  });
 
-   io.on("disconnect", () => {
-      console.log("Client disconnected");
-      delete clients[socket.id];
-   });
+  io.on("disconnect", () => {
+    console.log("Client disconnected");
+    delete clients[socket.id];
+  });
 });
 
 const start = async () => {
-   try {
-      await mongoose.connect(process.env.DB_URL, {
-         useNewUrlParser: true,
-         useUnifiedTopology: true,
-      });
-      app.listen(PORT, () => console.log(`server started on ${PORT}`));
-      server.listen(SOCKET_PORT, () =>
-         console.log(`socket started on ${SOCKET_PORT}`),
-      );
-   } catch (e) {
-      console.log(e);
-   }
+  try {
+    await mongoose.connect(process.env.DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    server.listen(PORT, () => console.log(`socket started on ${PORT}`));
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 start();
