@@ -1,70 +1,76 @@
 @import "../../color-variables.scss";
 
 .header__wrap {
-   position: sticky;
-   top: 0;
-   z-index: 10;
-   border-bottom: 1px solid var(--primary-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--primary-color);
 
-   .header {
-      background: var(--light-dark);
-      padding: 0 310px 0 350px;
+  .header {
+    background: var(--light-dark);
+    padding: 0 310px 0 350px;
+    display: flex;
+    height: 65px;
+    justify-content: space-between;
+    align-items: center;
+
+    &__left {
       display: flex;
-      height: 65px;
-      justify-content: space-between;
       align-items: center;
+    }
 
-      .logo {
-         font-size: 54px;
-         font-family: "Ubuntu", sans-serif;
-         letter-spacing: 4px;
-         cursor: pointer;
-         display: inline-block;
+    .logo {
+      font-size: 54px;
+      font-family: "Ubuntu", sans-serif;
+      letter-spacing: 4px;
+      cursor: pointer;
+      display: inline-block;
+      margin-right: 40px;
 
-         span:nth-of-type(1) {
-            color: var(--purple-logo);
-         }
-         span:nth-of-type(2) {
-            color: var(--orange-logo);
-         }
-         span:nth-of-type(3) {
-            color: var(--green-logo);
-         }
+      span:nth-of-type(1) {
+        color: var(--purple-logo);
+      }
+      span:nth-of-type(2) {
+        color: var(--orange-logo);
+      }
+      span:nth-of-type(3) {
+        color: var(--green-logo);
+      }
+    }
+
+    .user__avatar {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 12px 30px;
+      gap: 5px;
+
+      &:hover {
+        background: var(--primary-color);
       }
 
-      .user__avatar {
-         cursor: pointer;
-         display: flex;
-         align-items: center;
-         padding: 12px 30px;
-         gap: 5px;
-
-         &:hover {
-            background: var(--primary-color);
-         }
-
-         &_focus {
-            background: var(--primary-color);
-         }
-
-         &_img {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-         }
+      &_focus {
+        background: var(--primary-color);
       }
-   }
+
+      &_img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+      }
+    }
+  }
 }
 
 .profile {
-   display: inline;
-   position: absolute;
-   right: 310px;
-   font-size: 42px;
-   width: 360px;
-   min-height: 380px;
-   border-radius: 0 0 10px 10px;
-   z-index: 10;
-   border: 1px solid var(--primary-color);
-   background-color: var(--light-dark);
+  display: inline;
+  position: absolute;
+  right: 310px;
+  font-size: 42px;
+  width: 360px;
+  min-height: 380px;
+  border-radius: 0 0 10px 10px;
+  z-index: 10;
+  border: 1px solid var(--primary-color);
+  background-color: var(--light-dark);
 }

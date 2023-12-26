@@ -1,0 +1,59 @@
+.notification {
+  display: flex;
+  justify-content: space-between;
+  width: 600px;
+  word-wrap: break-word;
+  border-bottom: 1px solid rgb(78, 78, 78);
+  padding: 20px 20px;
+  transition: all 0.1s;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--primary-color);
+  }
+
+  &__payload {
+    line-height: 1.5;
+  }
+
+  &__user {
+    display: flex;
+    gap: 20px;
+    width: 40%;
+
+    &_username {
+      color: var(--blue-icon);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &_avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  }
+
+  &__post {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 40%;
+    align-items: center;
+    gap: 10px;
+
+    &_content {
+      width: 100%;
+      height: 24px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

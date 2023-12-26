@@ -1,0 +1,48 @@
+.user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  &__message {
+    margin-bottom: 10px;
+  }
+
+  &__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+  }
+
+  &__username {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.post {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__content {
+    height: 24px;
+    width: 100px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .dismiss {
+    cursor: pointer;
+    padding: 3px;
+  }
+}

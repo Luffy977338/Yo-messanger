@@ -6,13 +6,28 @@ import { IRoute } from "./interfaces/route.interface";
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { useQuery } from "@tanstack/react-query";
-import AuthService from "./service/auth-service";
+import AuthService from "./service/auth.service";
 import Loader from "./components/UI/Loader/Loader";
 import { Toaster } from "react-hot-toast";
+import { io } from "socket.io-client";
+import socket from "./store/socket";
+import user from "./store/user";
 
 const App = () => {
   const path = useNavigate();
   const location = useLocation();
+  React.useEffect(() => {
+    const newSocket = io("http://localhost:5000");
+    socket.setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    socket.socket.emit("setUserId", user.user._id);
+  }, [user.user._id]);
 
   React.useEffect(() => {
     if (!!localStorage.getItem("token")) {

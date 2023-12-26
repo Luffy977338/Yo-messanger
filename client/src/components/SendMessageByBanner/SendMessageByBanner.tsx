@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { IUser } from "../../interfaces/user.interface";
 import { API_URL } from "../../http";
 import React from "react";
-import { io } from "socket.io-client";
 import user from "../../store/user";
 import st from "./send-message-by-banner.module.scss";
+import socket from "../../store/socket";
 
 const SendMessageByBanner = ({
   userCreator,
@@ -14,16 +14,6 @@ const SendMessageByBanner = ({
   setIsClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const path = useNavigate();
-  const [socket, setSocket] = React.useState<any>(null);
-
-  React.useEffect(() => {
-    const newSocket = io("http://localhost:5000");
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
 
   React.useEffect(() => {
     if (userCreator) {
@@ -32,15 +22,15 @@ const SendMessageByBanner = ({
   }, [userCreator]);
 
   const joinChatRoom = () => {
-    if (socket) {
-      if (socket.room) {
-        socket.emit("leave", socket.room);
-        socket.room = null;
+    if (socket.socket) {
+      if (socket.socket.room) {
+        socket.socket.emit("leave", socket.socket.room);
+        socket.socket.room = null;
       }
 
       const roomId = [`${user.user._id}`, userCreator].sort().join("_");
-      socket.room = roomId;
-      socket.emit("join", roomId);
+      socket.socket.room = roomId;
+      socket.socket.emit("join", roomId);
     }
   };
 
@@ -51,10 +41,10 @@ const SendMessageByBanner = ({
     content: string;
     picture: null | File;
   }) => {
-    if (socket) {
+    if (socket.socket) {
       const roomId = [`${user.user._id}`, userCreator._id].sort().join("_");
       const userCreatorId = userCreator._id.toString();
-      socket.emit("message", {
+      socket.socket.emit("message", {
         roomId,
         message,
         messageToId: userCreatorId,

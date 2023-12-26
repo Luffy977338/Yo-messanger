@@ -1,0 +1,76 @@
+.notifications {
+  position: absolute;
+  background: var(--dark-color);
+  overflow-y: scroll;
+  height: 700px;
+  background: var(--light-dark);
+  color: var(--secondary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0 0 15px 15px;
+
+  &__button {
+    position: sticky;
+    bottom: 0;
+    border: none;
+    border-top: 1px solid var(--primary-color);
+    background: var(--light-dark);
+    color: var(--blue-icon);
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    padding: 15px 0;
+    border-radius: 0 0 15px 15px;
+    transition: all 0.1s;
+
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--light-dark);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 15px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--second-dark);
+  }
+}
+
+.notificationsCounter {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(15px, -10px);
+  font-size: 14px;
+  color: var(--secondary-color);
+  padding: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: grey;
+}
+
+.notificationButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--second-dark);
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  padding: 19px;
+
+  &:hover {
+    background: var(--primary-color);
+  }
+}
