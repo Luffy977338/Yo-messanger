@@ -21,11 +21,14 @@ class ChatService {
     if (chat?.messages && chat.messages.length) {
       chat.messages = chat.messages.reverse();
     }
+    let totalPages = 0;
 
-    const totalCount = await chatModel.findOne({ roomId });
-    const totalPages = totalCount.messages.length
-      ? Math.ceil(totalCount.messages.length / perPage)
-      : 0;
+    if (roomId.split("_").length === 2) {
+      const totalCount = await chatModel.findOne({ roomId });
+      totalPages = totalCount.messages.length
+        ? Math.ceil(totalCount.messages.length / perPage)
+        : 0;
+    }
 
     return {
       chat,

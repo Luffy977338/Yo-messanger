@@ -63,10 +63,18 @@ const MessagesList = ({
     if (ref.current) {
       ref.current.scrollTo({
         top: ref.current.scrollHeight,
+      });
+    }
+  }, [isLoading]);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTo({
+        top: ref.current.scrollHeight,
         behavior: "smooth",
       });
     }
-  }, [socketMessages, isLoading]);
+  }, [socketMessages]);
 
   return (
     <div

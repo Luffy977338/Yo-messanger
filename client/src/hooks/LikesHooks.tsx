@@ -3,7 +3,7 @@ import UserActionsService from "../service/user-actions.service";
 import user from "../store/user";
 
 export function useLike(
-  postId: number,
+  postId: string,
   likes: number,
   setLikes: React.Dispatch<React.SetStateAction<number>>,
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
@@ -21,7 +21,7 @@ export function useLike(
 }
 
 export function useRemoveLike(
-  postId: number,
+  postId: string,
   likes: number,
   setLikes: React.Dispatch<React.SetStateAction<number>>,
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,

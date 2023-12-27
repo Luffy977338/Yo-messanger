@@ -1,47 +1,47 @@
 @import "./color-variables.scss";
 
 body {
-   color: var(--secondary-color);
-   font-family: "Noto Sans JP", sans-serif;
-   background: var(--dark);
+  color: var(--secondary-color);
+  font-family: "Noto Sans JP", sans-serif;
+  background: var(--dark);
 }
 
 main {
-   margin: 20px 0;
-   display: flex;
-   justify-content: center;
-   gap: 50px;
-   align-items: flex-start;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  align-items: flex-start;
 }
 
 article {
-   width: 1000px;
+  width: 1000px;
 }
 
 img {
-   object-fit: cover;
-   user-select: none;
+  object-fit: cover;
+  user-select: none;
 }
 
 ::-webkit-scrollbar {
-   width: 8px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-   background: var(--dark);
+  background: var(--dark);
 }
 
 ::-webkit-scrollbar-thumb {
-   background: var(--primary-color);
-   border-radius: 20px;
+  background: var(--primary-color);
+  border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-   background: var(--second-dark);
+  background: var(--second-dark);
 }
 
 * {
-   box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
@@ -125,11 +125,11 @@ time,
 mark,
 audio,
 video {
-   margin: 0;
-   padding: 0;
-   border: 0;
-   font-size: 100%;
-   vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
 article,
@@ -143,21 +143,21 @@ hgroup,
 menu,
 nav,
 section {
-   display: block;
+  display: block;
 }
 body {
-   line-height: 1;
+  line-height: 1;
 }
 ol,
 ul {
-   list-style: none;
+  list-style: none;
 }
 blockquote,
 q {
-   quotes: none;
+  quotes: none;
 }
 
 table {
-   border-collapse: collapse;
-   border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }

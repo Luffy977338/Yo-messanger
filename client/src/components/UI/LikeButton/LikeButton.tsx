@@ -5,14 +5,15 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import st from "./like-button.module.scss";
 import socket from "../../../store/socket";
 import { IUser } from "../../../interfaces/user.interface";
+import { observer } from "mobx-react-lite";
 
 const LikeButton = ({
   postId,
   postLikes,
   userCreator,
 }: {
-  postId: number;
-  postLikes: number[];
+  postId: string;
+  postLikes: string[];
   userCreator: IUser;
 }) => {
   const [isLiked, setIsLiked] = useState<boolean>(
@@ -63,4 +64,4 @@ const LikeButton = ({
   );
 };
 
-export default LikeButton;
+export default observer(LikeButton);

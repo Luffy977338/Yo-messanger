@@ -8,75 +8,70 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import st from "./chat-users-list.module.scss";
 import { IMessage } from "../../interfaces/message.interface";
+import { observer } from "mobx-react-lite";
 
 const ChatUsersList = ({
-   messages,
-   username,
+  messages,
+  username,
 }: {
-   messages: IMessage[];
-   username: string | null;
+  messages: IMessage[];
+  username: string | null;
 }) => {
-   const path = useNavigate();
-   const queryClient = useQueryClient();
+  const path = useNavigate();
+  const queryClient = useQueryClient();
 
-   const { isLoading, data } = useQuery(
-      ["recentUsers", user.user._id],
-      () => {
-         return $api.get(`/${user.user._id}`);
-      },
-      { select: (data) => data.data },
-   );
+  const { isLoading, data } = useQuery(
+    ["recentUsers", user.user._id],
+    () => {
+      return $api.get(`/${user.user._id}`);
+    },
+    { select: (data) => data.data },
+  );
 
-   React.useEffect(() => {
-      for (let i = 0; i < 7; i++) {
-         setTimeout(() => {
-            queryClient.invalidateQueries(["recentUsers"]);
-         }, 250);
-      }
-   }, [data, messages]);
+  React.useEffect(() => {
+    for (let i = 0; i < 7; i++) {
+      setTimeout(() => {
+        queryClient.invalidateQueries(["recentUsers"]);
+      }, 250);
+    }
+  }, [data, messages]);
 
-   return (
-      <div className={st.chat__users}>
-         <ul>
-            {isLoading ? (
-               <Loader />
-            ) : data ? (
-               <>
-                  {data?.recentChatUsers?.map(
-                     (
-                        u: { user: IUser; lastMessage: IMessage },
-                        index: number,
-                     ) => (
-                        <li
-                           onClick={() => {
-                              path(
-                                 `/messages?user=${
-                                    u.user._id
-                                 }&name=${u.user.username.toLocaleLowerCase()}`,
-                              );
-                           }}
-                           key={index}
-                           className={st.chatUser}
-                           style={
-                              u.user.username === username
-                                 ? { background: "var(--primary-color)" }
-                                 : {}
-                           }
-                        >
-                           <ChatUser
-                              chatUser={u.user}
-                              lastMessage={u.lastMessage}
-                           />
-                        </li>
-                     ),
-                  )}
-               </>
-            ) : (
-               ""
+  return (
+    <div className={st.chat__users}>
+      <ul>
+        {isLoading ? (
+          <Loader />
+        ) : data ? (
+          <>
+            {data?.recentChatUsers?.map(
+              (u: { user: IUser; lastMessage: IMessage }, index: number) => (
+                <li
+                  onClick={() => {
+                    path(
+                      `/messages?user=${
+                        u.user._id
+                      }&name=${u.user.username.toLocaleLowerCase()}`,
+                    );
+                  }}
+                  key={index}
+                  className={st.chatUser}
+                  style={
+                    u.user.username === username
+                      ? { background: "var(--primary-color)" }
+                      : {}
+                  }
+                >
+                  <ChatUser chatUser={u.user} lastMessage={u.lastMessage} />
+                </li>
+              ),
             )}
-         </ul>
-      </div>
-   );
+          </>
+        ) : (
+          ""
+        )}
+      </ul>
+    </div>
+  );
 };
 
-export default ChatUsersList;
+export default observer(ChatUsersList);

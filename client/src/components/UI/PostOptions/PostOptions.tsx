@@ -31,7 +31,7 @@ const PostOptions = ({
   picture,
   canDelete,
 }: {
-  id: number;
+  id: string;
   picture?: string;
   canDelete: boolean;
 }) => {

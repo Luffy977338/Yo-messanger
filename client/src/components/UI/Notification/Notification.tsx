@@ -43,25 +43,27 @@ const Notification = ({
             </span>
           </div>
         </div>
-        <div className={st.notification__post}>
-          {notification.post?.content && (
-            <div className={st.notification__post_content}>
-              {notification.post.content}
-            </div>
-          )}
-          <div>
-            {notification.post?.picture ? (
-              <img
-                className={st.notification__post_picture}
-                width={150}
-                src={`${API_URL}/${notification.post.picture}`}
-                alt=''
-              />
-            ) : (
-              ""
+        {notification.post ? (
+          <div className={st.notification__post}>
+            {notification.post.content && (
+              <div className={st.notification__post_content}>
+                {notification.post.content}
+              </div>
             )}
+            <div>
+              {notification.post.picture && (
+                <img
+                  className={st.notification__post_picture}
+                  width={150}
+                  src={`${API_URL}/${notification.post.picture}`}
+                  alt=''
+                />
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          "Запись удалена"
+        )}
       </div>
       {notification.post && isClicked ? (
         <PostModal

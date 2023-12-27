@@ -23,10 +23,6 @@ const App = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
-
-  React.useEffect(() => {
-    socket.socket.emit("setUserId", user.user._id);
   }, [user.user._id]);
 
   React.useEffect(() => {
@@ -37,6 +33,10 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
+    socket.socket.emit("setUserId", user.user._id);
+  }, [user.user._id]);
+
+  React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location]);
 
@@ -45,7 +45,11 @@ const App = () => {
   });
 
   if (isFetching) {
-    return <Loader />;
+    return (
+      <div style={{ display: "grid", placeItems: "center", height: "100vh" }}>
+        <Loader />
+      </div>
+    );
   }
 
   return (

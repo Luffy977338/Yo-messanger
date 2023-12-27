@@ -16,7 +16,6 @@ interface PostProps {
 
 const Post = ({ post, userCreator, canDelete = false }: PostProps) => {
   const path = useNavigate();
-
   const date = new Date();
   const createdAt = new Date(post.createdAt);
   const hours = createdAt.getHours();

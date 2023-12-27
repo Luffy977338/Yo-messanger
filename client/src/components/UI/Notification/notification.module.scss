@@ -1,4 +1,6 @@
 .notification {
+  cursor: pointer;
+  align-items: center;
   display: flex;
   justify-content: space-between;
   width: 600px;
@@ -45,7 +47,6 @@
     flex-direction: column;
     justify-content: center;
     width: 40%;
-    align-items: center;
     gap: 10px;
 
     &_content {

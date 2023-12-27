@@ -1,7 +1,7 @@
 const userActionsService = require("../service/user-actions.service");
 const { validationResult } = require("express-validator");
 const ApiError = require("../exceptions/api-error");
-const notificationsService = require("../service/notifications.service");
+const notificationService = require("../service/notification.service");
 
 class UserActionsController {
   async editProfile(req, res, next) {
@@ -73,9 +73,7 @@ class UserActionsController {
   async makeNotificationViewed(req, res, next) {
     try {
       const { id } = req.params;
-      const notification = await notificationsService.makeNotificationViewed(
-        id,
-      );
+      const notification = await notificationService.makeNotificationViewed(id);
 
       return res.json(notification);
     } catch (e) {

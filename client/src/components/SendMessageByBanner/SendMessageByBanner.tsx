@@ -5,6 +5,7 @@ import React from "react";
 import user from "../../store/user";
 import st from "./send-message-by-banner.module.scss";
 import socket from "../../store/socket";
+import { observer } from "mobx-react-lite";
 
 const SendMessageByBanner = ({
   userCreator,
@@ -106,4 +107,4 @@ const SendMessageByBanner = ({
   );
 };
 
-export default SendMessageByBanner;
+export default observer(SendMessageByBanner);

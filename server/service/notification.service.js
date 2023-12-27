@@ -14,6 +14,16 @@ class NotificationService {
 
     const userDto = new UserDto(user);
 
+    const isNotificationExist = await notificationModel.findOne({
+      user: userDto,
+      post: postId,
+      type,
+    });
+
+    if (isNotificationExist) {
+      throw ApiError.BadRequest(ERROR.notificationAlreadyExist);
+    }
+
     const notification = await notificationModel.create({
       user: userDto,
       type: type,
@@ -33,7 +43,10 @@ class NotificationService {
       },
     );
 
-    return await notification.populate("user post");
+    return (await notification.populate("user post")).populate({
+      path: "post",
+      populate: "userCreator",
+    });
   }
 
   async makeNotificationViewed(notifId) {
@@ -48,6 +61,18 @@ class NotificationService {
     }
 
     return await notification.populate("user post");
+  }
+
+  async deleteNotificationByPostId(postId) {
+    const notification = await notificationModel.deleteMany({
+      post: postId,
+    });
+
+    if (!notification.deletedCount) {
+      throw ApiError.NotFound(ERROR.notificationNotFound);
+    }
+
+    return notification;
   }
 }
 

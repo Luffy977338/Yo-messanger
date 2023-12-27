@@ -7,20 +7,20 @@ export default class UserActionsService {
     return $api.patch(`/edit/${user.user._id}`, updatedFields);
   }
 
-  static async getOneUser(id: number): Promise<AxiosResponse<any>> {
+  static async getOneUser(id: string): Promise<AxiosResponse<any>> {
     return $api.get(`/${id}`);
   }
 
   static async likePost(
-    postId: number,
-    userId: number,
+    postId: string,
+    userId: string,
   ): Promise<AxiosResponse<any>> {
     return $api.patch(`/like/${postId}/${userId}`);
   }
 
   static async removeLikePost(
-    postId: number,
-    userId: number,
+    postId: string,
+    userId: string,
   ): Promise<AxiosResponse<any>> {
     return $api.patch(`/removeLike/${postId}/${userId}`);
   }

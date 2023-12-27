@@ -1,4 +1,4 @@
-import React, { Ref } from "react";
+import React from "react";
 import st from "./header.module.scss";
 import { useNavigate } from "react-router-dom";
 import { MdExpandMore } from "react-icons/md";
@@ -9,6 +9,7 @@ import user from "../../store/user";
 import Notifications from "./../Notifications/Notifications";
 import PopUpAnimation from "../../animations/PopUp.animation";
 import { useClickAway } from "../../hooks/useClickAway";
+import { observer } from "mobx-react-lite";
 
 const Header = () => {
   const [isProfileClicked, setIsProfileClicked] = React.useState(false);
@@ -74,4 +75,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default observer(Header);

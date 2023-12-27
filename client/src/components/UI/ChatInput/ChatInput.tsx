@@ -2,6 +2,7 @@ import React from "react";
 import user from "../../../store/user";
 import st from "./chat-input.module.scss";
 import socket from "../../../store/socket";
+import { observer } from "mobx-react-lite";
 
 const ChatInput = ({ userSearch }: { userSearch: string }) => {
   const [messageInput, setMessageInput] = React.useState<string>("");
@@ -82,4 +83,4 @@ const ChatInput = ({ userSearch }: { userSearch: string }) => {
   );
 };
 
-export default ChatInput;
+export default observer(ChatInput);

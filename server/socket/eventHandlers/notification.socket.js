@@ -1,5 +1,5 @@
 const userModel = require("../../models/user.model");
-const notificationsService = require("../../service/notifications.service");
+const notificationService = require("../../service/notification.service");
 
 function NotificationHandler(socket, io) {
   // socket.on("comment", async ({ commentedUserId, userId }) => {
@@ -15,7 +15,7 @@ function NotificationHandler(socket, io) {
   //     });
   //   }
 
-  //   const notification = await notificationsService.newNotification(
+  //   const notification = await notificationService.newNotification(
   //     userId,
   //     "comment",
   //   );
@@ -25,7 +25,7 @@ function NotificationHandler(socket, io) {
   socket.on("like", async ({ likedPostId, likedUserId, userId }) => {
     try {
       const likedUser = await userModel.findById(likedUserId);
-      const notification = await notificationsService.newNotification(
+      const notification = await notificationService.newNotification(
         likedPostId,
         likedUserId,
         userId,
@@ -57,7 +57,7 @@ function NotificationHandler(socket, io) {
   //     });
   //   }
 
-  //   return notificationsService.newNotification(userId, "subscription");
+  //   return notificationService.newNotification(userId, "subscription");
   // });
 }
 

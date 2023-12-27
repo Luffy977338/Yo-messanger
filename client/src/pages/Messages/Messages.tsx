@@ -8,6 +8,7 @@ import MessagesList from "../../components/MessagesList/MessagesList";
 import ChatTop from "../../components/ChatTop/ChatTop";
 import ChatUsersList from "../../components/ChatUsersList/ChatUsersList";
 import socket from "../../store/socket";
+import { observer } from "mobx-react-lite";
 
 const Messages = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const Messages = () => {
     searchParams.get("name"),
   );
   const [roomId, setRoomId] = React.useState<string>(
-    [`${user.user._id}`, userIdSearch].sort().join("_"),
+    [user.user._id, userIdSearch].sort().join("_"),
   );
 
   const [messages, setMessages] = React.useState<IMessage[]>([]);
@@ -51,7 +52,7 @@ const Messages = () => {
 
   React.useEffect(() => {
     if (userIdSearch) {
-      setRoomId([`${user.user._id}`, userIdSearch].sort().join("_"));
+      setRoomId([user.user._id, userIdSearch].sort().join("_"));
       joinChatRoom();
     }
   }, [userIdSearch]);
@@ -63,7 +64,7 @@ const Messages = () => {
         socket.socket.room = null;
       }
 
-      const roomId = [`${user.user._id}`, userIdSearch].sort().join("_");
+      const roomId = [user.user._id, userIdSearch].sort().join("_");
       setRoomId(roomId);
       socket.socket.room = roomId;
       socket.socket.emit("join", roomId);
@@ -86,4 +87,4 @@ const Messages = () => {
   );
 };
 
-export default Messages;
+export default observer(Messages);

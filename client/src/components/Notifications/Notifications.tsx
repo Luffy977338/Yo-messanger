@@ -13,6 +13,7 @@ import {
   useNotification,
 } from "../../hooks/NotificationsHooks";
 import { useClickAway } from "../../hooks/useClickAway";
+import { observer } from "mobx-react-lite";
 
 const Notifications = () => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -21,14 +22,14 @@ const Notifications = () => {
   const notificationsBarRef = useRef<HTMLDivElement | null>(null);
 
   const {} = useQuery(
-    [user.user._id],
+    ["notifications", user.user._id],
     () => {
       return $api.get(`/${user.user._id}`);
     },
     {
       select: (data) => data.data,
       onSuccess: (data) => {
-        setNotifications((prev) => [...data?.notifications, ...prev]);
+        setNotifications([...data?.notifications]);
       },
     },
   );
@@ -112,4 +113,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default observer(Notifications);

@@ -4,6 +4,7 @@ const postModel = require("../models/post.model");
 const userModel = require("../models/user.model");
 const fileService = require("./file.service");
 const path = require("path");
+const notificationService = require("./notification.service");
 
 class PostService {
   async getAllPosts(page, perPage) {
@@ -83,6 +84,7 @@ class PostService {
   }
 
   async deletePost(userId, postId, fileName) {
+    await notificationService.deleteNotificationByPostId(postId);
     const post = await postModel.findByIdAndDelete(postId);
     await userModel.findByIdAndUpdate(
       userId,
