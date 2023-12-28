@@ -60,6 +60,12 @@ npm run dev
 to start server side
 
 ```
+cd ../
+```
+
+if you need return in main folder before
+
+```
 cd server
 ```
 
