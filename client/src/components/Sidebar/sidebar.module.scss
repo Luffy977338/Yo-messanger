@@ -1,33 +1,55 @@
 .sidebar {
-   transform: translateY(0);
-   position: sticky;
-   top: calc(65px + 30px);
-   left: 0;
-   right: 100px;
-   box-sizing: content-box;
-   display: inline-block;
-   transition: all 0.25s ease;
+  transform: translateY(0);
+  position: sticky;
+  top: calc(65px + 30px);
+  left: 0;
+  right: 100px;
+  box-sizing: content-box;
+  display: inline-block;
+  transition: all 0.25s ease;
+}
 
-   .icon {
-      color: var(--blue-icon);
-   }
+.icon {
+  color: var(--blue-icon);
+}
 
-   .option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: 0.1s;
-      padding: 10px 30px;
-      border-radius: 10px;
-      font-size: 20px;
-      cursor: pointer;
+.option {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  transition: 0.1s;
+  padding: 0 0 0 40px;
+  border-radius: 10px;
+  font-size: 20px;
+  cursor: pointer;
 
-      &:hover {
-         background: var(--light-dark);
-      }
-   }
+  &__button {
+    display: flex;
+    gap: 10px;
+    padding: 10px 30px 10px 0;
+  }
+
+  &:hover {
+    background: var(--light-dark);
+
+    .option__setting {
+      display: block;
+    }
+  }
+
+  &__setting {
+    left: 10px;
+    position: absolute;
+    display: none;
+    color: gray;
+    transition: all 0.2s;
+
+    &:hover {
+      color: rgb(185, 185, 185);
+    }
+  }
 }
 
 .sidebar__scrolled {
-   transform: translateY(-150%);
+  transform: translateY(-150%);
 }

@@ -15,11 +15,11 @@ const routes: IRoute[] = [
     component: UserPosts,
   },
   { path: "/friends/:id", component: Friends },
-  { path: "/edit/:id", component: EditProfile },
+  { path: "/edit", component: EditProfile },
   { path: "/auth", component: Authorization },
   { path: "/messages", component: Messages },
-  { path: "/notifications/:id", component: AllNotifications },
-  { path: "/settings/:id", component: Settings },
+  { path: "/notifications", component: AllNotifications },
+  { path: "/settings", component: Settings },
 ];
 
 export default routes;

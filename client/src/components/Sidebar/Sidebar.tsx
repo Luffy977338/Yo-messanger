@@ -1,84 +1,128 @@
-import React from "react";
+import { Fragment, createElement, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import user from "../../store/user";
 import st from "./sidebar.module.scss";
-import { BiUserCircle } from "react-icons/bi";
-import { HiOutlineNewspaper } from "react-icons/hi";
-import { FaUserFriends } from "react-icons/fa";
-import { TbMessageCircle2 } from "react-icons/tb";
 import { observer } from "mobx-react-lite";
+import { IPath } from "../../interfaces/SideBarPaths";
+import { IoSettingsOutline } from "react-icons/io5";
+import Modal from "../UI/Modal/Modal";
+import { defaultPaths, pathsIcons } from "../../constants/sidebarPaths";
 
 const Sidebar = () => {
-   const [prevScrollPos, setPrevScrollPos] = React.useState(0);
-   const [headerVisible, setHeaderVisible] = React.useState(true);
+  const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+  const path = useNavigate();
+  const [paths, setPaths] = useState<IPath[]>([]);
 
-   const handleScroll = () => {
-      const currentScrollPos = window.scrollY;
-      setHeaderVisible(currentScrollPos < prevScrollPos);
-      setPrevScrollPos(currentScrollPos);
-   };
+  const handleScroll = () => {
+    const currentScrollPos = window.scrollY;
+    setHeaderVisible(currentScrollPos < prevScrollPos);
+    setPrevScrollPos(currentScrollPos);
+  };
 
-   React.useEffect(() => {
-      window.addEventListener("scroll", handleScroll);
-      return () => {
-         window.removeEventListener("scroll", handleScroll);
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [prevScrollPos]);
+
+  useEffect(() => {
+    if (paths.length) {
+      localStorage.setItem("sidebarPaths", JSON.stringify(paths));
+    }
+  }, [paths]);
+
+  useEffect(() => {
+    const storedPaths = localStorage.getItem("sidebarPaths");
+    if (storedPaths) {
+      setPaths(JSON.parse(storedPaths));
+    } else {
+      setPaths(defaultPaths);
+    }
+  }, []);
+
+  const handleCheckboxChange = (index: number) => {
+    setPaths((prevPaths) => {
+      const newPaths = [...prevPaths];
+
+      if (newPaths[index].required) {
+        return newPaths;
+      }
+
+      newPaths[index] = {
+        ...newPaths[index],
+        included: !newPaths[index].included,
       };
-   }, [prevScrollPos]);
-   const path = useNavigate();
+      return newPaths;
+    });
+  };
 
-   return (
+  return (
+    <>
       <nav
-         className={[
-            st.sidebar,
-            headerVisible ? "" : st.sidebar__scrolled,
-         ].join(" ")}
+        className={[st.sidebar, headerVisible ? "" : st.sidebar__scrolled].join(
+          " ",
+        )}
       >
-         <div
-            className={st.option}
-            onClick={() => {
-               path(`/${user.user._id}`);
-            }}
-         >
-            <div className={st.icon}>
-               <BiUserCircle />
-            </div>
-            Мой профиль
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path("/posts");
-            }}
-         >
-            <div className={st.icon}>
-               <HiOutlineNewspaper />
-            </div>
-            Новости
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path("/messages");
-            }}
-         >
-            <div className={st.icon}>
-               <TbMessageCircle2 />
-            </div>
-            Сообщения
-         </div>
-         <div
-            className={st.option}
-            onClick={() => {
-               path(`/friends/${user.user._id}`);
-            }}
-         >
-            <div className={st.icon}>
-               <FaUserFriends />
-            </div>
-            Друзья
-         </div>
+        {paths.map((opt) => (
+          <Fragment key={opt.title}>
+            {opt.included ? (
+              <div className={st.option}>
+                <div
+                  onClick={() => setIsClicked(true)}
+                  className={st.option__setting}
+                >
+                  <IoSettingsOutline style={{ fontSize: "18px" }} />
+                </div>
+                <div
+                  className={st.option__button}
+                  onClick={() => path(opt.path)}
+                >
+                  <div className={st.icon}>
+                    {createElement(pathsIcons[opt.icon])}
+                  </div>
+                  <div>{opt.title}</div>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+          </Fragment>
+        ))}
       </nav>
-   );
+      <Modal visible={isClicked} setVisible={setIsClicked}>
+        <div>
+          {paths.map((opt, index) => (
+            <div key={opt.title}>
+              {opt.required ? (
+                <input
+                  type='checkbox'
+                  checked={opt.included}
+                  disabled
+                  onChange={() => handleCheckboxChange(index)}
+                />
+              ) : (
+                <input
+                  type='checkbox'
+                  defaultChecked={opt.included}
+                  onChange={() => handleCheckboxChange(index)}
+                />
+              )}
+              <div key={opt.title} className={st.option}>
+                <div className={st.option__button}>
+                  <div className={st.icon}>
+                    {createElement(pathsIcons[opt.icon])}
+                  </div>
+                  <div>{opt.title}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
+    </>
+  );
 };
 
 export default observer(Sidebar);
