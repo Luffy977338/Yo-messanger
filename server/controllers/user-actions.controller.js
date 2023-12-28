@@ -33,32 +33,6 @@ class UserActionsController {
     }
   }
 
-  async likePost(req, res, next) {
-    try {
-      const userId = req.params.userId;
-      const postId = req.params.postId;
-
-      const post = await userActionsService.likePost(postId, userId);
-
-      return res.json(post);
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  async removeLikePost(req, res, next) {
-    try {
-      const userId = req.params.userId;
-      const postId = req.params.postId;
-
-      const post = await userActionsService.removeLikePost(postId, userId);
-
-      return res.json(post);
-    } catch (e) {
-      next(e);
-    }
-  }
-
   async getOneUser(req, res, next) {
     try {
       const id = req.params.id;

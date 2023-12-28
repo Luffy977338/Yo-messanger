@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import UserActionsService from "../service/user-actions.service";
 import user from "../store/user";
+import PostService from "../service/post.service";
 
 export function useLike(
   postId: string,
@@ -9,7 +9,7 @@ export function useLike(
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
-  return useMutation(() => UserActionsService.likePost(postId, user.user._id), {
+  return useMutation(() => PostService.likePost(postId, user.user._id), {
     onError: () => {
       setLikes(likes - 1);
       setIsLiked(false);
@@ -27,16 +27,13 @@ export function useRemoveLike(
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
-  return useMutation(
-    () => UserActionsService.removeLikePost(postId, user.user._id),
-    {
-      onError: () => {
-        setLikes(likes + 1);
-        setIsLiked(true);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries(["post"]);
-      },
+  return useMutation(() => PostService.removeLikePost(postId, user.user._id), {
+    onError: () => {
+      setLikes(likes + 1);
+      setIsLiked(true);
     },
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries(["post"]);
+    },
+  });
 }

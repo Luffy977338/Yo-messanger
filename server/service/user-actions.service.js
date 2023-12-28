@@ -57,48 +57,6 @@ class UserActionsService {
     return userDto;
   }
 
-  async likePost(postId, userId) {
-    if (!postId || !userId) {
-      throw ApiError.BadRequest(ERROR.expectedId);
-    }
-
-    const post = await postModel
-      .findByIdAndUpdate(
-        postId,
-        {
-          $addToSet: { likes: userId },
-        },
-        { new: true },
-      )
-      .populate("likes")
-      .populate("userCreator");
-
-    if (!post) {
-      throw ApiError.NotFound(ERROR.postNotFound);
-    }
-
-    return post;
-  }
-
-  async removeLikePost(postId, userId) {
-    if (!postId || !userId) {
-      throw ApiError.NotFound("Пост или пользователь не найден");
-    }
-
-    const post = await postModel
-      .findByIdAndUpdate(
-        postId,
-        {
-          $pull: { likes: userId },
-        },
-        { new: true },
-      )
-      .populate("likes")
-      .populate("userCreator");
-
-    return post;
-  }
-
   async getOneUser(id) {
     if (!id) {
       throw ApiError.BadRequest(ERROR.expectedId);

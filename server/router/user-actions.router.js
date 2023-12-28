@@ -17,16 +17,6 @@ router.patch(
   }),
   userActionsController.editProfile,
 );
-router.patch(
-  "/like/:postId/:userId",
-  authMiddleware,
-  userActionsController.likePost,
-);
-router.patch(
-  "/removeLike/:postId/:userId",
-  authMiddleware,
-  userActionsController.removeLikePost,
-);
 router.get("/:id", authMiddleware, userActionsController.getOneUser);
 router.post(
   "/makeNotificationViewed/:id",

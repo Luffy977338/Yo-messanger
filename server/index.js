@@ -6,7 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const mongoose = require("mongoose");
-const postsRouter = require("./router/posts.router.js");
+const postRouter = require("./router/post.router.js");
 const userAuthRouter = require("./router/user-auth.router.js");
 const errorMiddleware = require("./middlewares/error.middleware.js");
 const userFriendshipRouter = require("./router/user-friendship.router.js");
@@ -35,7 +35,7 @@ app.use(
   }),
 );
 app.use("/auth", userAuthRouter);
-app.use("/posts", postsRouter);
+app.use("/posts", postRouter);
 app.use(userFriendshipRouter);
 app.use(userActionsRouter);
 app.use("/chat", chatRouter);

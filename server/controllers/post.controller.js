@@ -47,6 +47,32 @@ class PostController {
       next(e);
     }
   }
+
+  async likePost(req, res, next) {
+    try {
+      const userId = req.params.userId;
+      const postId = req.params.postId;
+
+      const post = await postService.likePost(postId, userId);
+
+      return res.json(post);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async removeLikePost(req, res, next) {
+    try {
+      const userId = req.params.userId;
+      const postId = req.params.postId;
+
+      const post = await postService.removeLikePost(postId, userId);
+
+      return res.json(post);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = new PostController();

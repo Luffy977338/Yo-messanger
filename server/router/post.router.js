@@ -8,5 +8,11 @@ router.get("/", authMiddleware, postController.getAllPosts);
 router.get("/:postId", authMiddleware, postController.getOnePost);
 router.post("/:userId", authMiddleware, postController.createPost);
 router.delete("/:userId/:postId", authMiddleware, postController.deletePost);
+router.post("/like/:postId/:userId", authMiddleware, postController.likePost);
+router.post(
+  "/removeLike/:postId/:userId",
+  authMiddleware,
+  postController.removeLikePost,
+);
 
 module.exports = router;
