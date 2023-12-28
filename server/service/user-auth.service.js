@@ -9,6 +9,12 @@ const UserAuthDto = require("../dtos/user-auth.dto.js");
 const ApiError = require("../exceptions/api-error.js");
 const ERROR = require("../constants/ERROR.js");
 
+const isEmailService =
+  process.env.SMTP_PASSWORD &&
+  process.env.SMTP_USER &&
+  process.env.SMTP_PORT &&
+  process.env.SMTP_HOST;
+
 class UserAuthService {
   async registration(username, email, password) {
     const candidateEmail = await UserModel.findOne({ email });
@@ -41,10 +47,12 @@ class UserAuthService {
       subscriptions: [],
       description: "",
     });
-    await mailService.sendActiovationLink(
-      email,
-      `${process.env.API_URL}/auth/activate/${activationLink}`,
-    );
+    if (isEmailService) {
+      await mailService.sendActiovationLink(
+        email,
+        `${process.env.API_URL}/auth/activate/${activationLink}`,
+      );
+    }
 
     const userDto = new UserDto(user);
     const userAuthDto = new UserAuthDto(user);
