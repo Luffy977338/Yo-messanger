@@ -24,4 +24,9 @@ export default class PostService {
   ): Promise<AxiosResponse<any>> {
     return $api.post(`/posts/removeLike/${postId}/${userId}`);
   }
+
+  static async createdPost(newPost: any): Promise<AxiosResponse<any>> {
+    const response = await $api.post(`/posts/${user.user._id}`, newPost);
+    return response.data;
+  }
 }

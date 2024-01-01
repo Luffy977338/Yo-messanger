@@ -1,4 +1,4 @@
-type TIcon = "profile" | "posts" | "messages" | "friends";
+type TIcon = "profile" | "posts" | "messages" | "friends" | "notifications";
 
 export interface IPath {
   path: string;

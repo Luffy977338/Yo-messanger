@@ -1,43 +1,33 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { FiMoreHorizontal } from "react-icons/fi";
 import st from "./post-options.module.scss";
 import { useQuery } from "@tanstack/react-query";
 import { IoTrashOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
-import Modal from "../Modal/Modal";
-import Loader from "../Loader/Loader";
-import { IUser } from "../../../interfaces/user.interface";
-import $api from "../../../http";
-import { useDeletePost } from "../../../hooks/PostHooks";
-import LikeUser from "../LikeUser/LikeUser";
+import Modal from "../UI/Modal/Modal";
+import Loader from "../UI/Loader/Loader";
+import { IUser } from "../../interfaces/user.interface";
+import $api from "../../http";
+import LikeUser from "../UI/LikeUser/LikeUser";
 import toast from "react-hot-toast";
-
-const MMenu = {
-  from: {
-    y: 10,
-    x: -140,
-    opacity: 0,
-  },
-  to: {
-    y: 0,
-    opacity: 1,
-    x: -140,
-  },
-};
+import { useDeletePost } from "../../hooks/PostHooks";
+import { MMenuPopUpAnimation } from "../../animations/PopUp.animation";
 
 const PostOptions = ({
   id,
   picture,
   canDelete,
+  setQueryKey,
 }: {
   id: string;
   picture?: string;
   canDelete: boolean;
+  setQueryKey?: Dispatch<SetStateAction<any>>;
 }) => {
   const [visible, setVisible] = React.useState<boolean>(false);
   const [isHover, setIsHover] = React.useState<boolean>(false);
-  const deleteMutation = useDeletePost();
+  const deleteMutation = useDeletePost({ setQueryKey });
 
   const { isFetching, data } = useQuery(
     ["post", id],
@@ -66,7 +56,7 @@ const PostOptions = ({
             initial='from'
             animate='to'
             exit='from'
-            variants={MMenu}
+            variants={MMenuPopUpAnimation}
             className={st.mutations}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
@@ -121,24 +111,20 @@ const PostOptions = ({
         <div>
           {isFetching ? (
             <Loader />
-          ) : data ? (
-            data.likes?.length ? (
-              <div className={st.likeUser__wrap}>
-                {data.likes.map((user: IUser) => (
-                  <div key={user._id} onClick={() => setVisible(false)}>
-                    <LikeUser
-                      id={user._id}
-                      avatar={user.avatar}
-                      username={user.username}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              ""
-            )
+          ) : data && data.likes?.length ? (
+            <div className={st.likeUser__wrap}>
+              {data.likes.map((user: IUser) => (
+                <div key={user._id} onClick={() => setVisible(false)}>
+                  <LikeUser
+                    id={user._id}
+                    avatar={user.avatar}
+                    username={user.username}
+                  />
+                </div>
+              ))}
+            </div>
           ) : (
-            "Что-то пошло не так"
+            ""
           )}
         </div>
       </Modal>

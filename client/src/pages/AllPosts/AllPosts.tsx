@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
-import Post from "../../components/UI/Post/Post";
+import Post from "../../components/Post/Post";
 import st from "./all-posts.module.scss";
 import Form from "../../components/Form/Form";
 import $api from "../../http";
@@ -43,11 +43,11 @@ const AllPosts = () => {
   return (
     <div style={{ display: "flex" }}>
       <div className={st.all}>
+        <Form setQueryKey={setQueryKey} isLoading={isLoading} />
         {isLoading ? (
           <LoadPost />
         ) : (
           <div className={st.allPosts}>
-            <Form setQueryKey={setQueryKey} />
             {data?.pages.map((page, pageIndex) => (
               <React.Fragment key={pageIndex}>
                 {page.posts.map((post: IPost) => (
@@ -63,11 +63,7 @@ const AllPosts = () => {
         )}
       </div>
       <div>
-        <UserFriends
-          isLoading={isLoading}
-          id={user.user._id}
-          username={user.user.username}
-        />
+        <UserFriends id={user.user._id} />
       </div>
     </div>
   );

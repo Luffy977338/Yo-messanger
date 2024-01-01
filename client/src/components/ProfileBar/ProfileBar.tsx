@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
-import PopUpAnimation from "../../animations/PopUp.animation";
+import { MPopUpAnimation } from "../../animations/PopUp.animation";
 import { useState, useRef } from "react";
 import { useClickAway } from "../../hooks/useClickAway";
 
@@ -54,7 +54,7 @@ const ProfileBar = () => {
       <AnimatePresence mode='wait'>
         {isClicked ? (
           <motion.div
-            variants={PopUpAnimation}
+            variants={MPopUpAnimation}
             initial='from'
             animate='to'
             exit='from'

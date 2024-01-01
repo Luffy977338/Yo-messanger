@@ -4,8 +4,10 @@ import st from "./sidebar.module.scss";
 import { observer } from "mobx-react-lite";
 import { IPath } from "../../interfaces/SideBarPaths";
 import { IoSettingsOutline } from "react-icons/io5";
-import Modal from "../UI/Modal/Modal";
-import { defaultPaths, pathsIcons } from "../../constants/sidebarPaths";
+import { pathsIcons } from "../../constants/sidebarPaths";
+import user from "../../store/user";
+import SidebarOptions from "../SidebarOptions/SidebarOptions";
+import { useSidebarPaths } from "../../hooks/useSidebarPaths";
 
 const Sidebar = () => {
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
@@ -13,6 +15,7 @@ const Sidebar = () => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const path = useNavigate();
   const [paths, setPaths] = useState<IPath[]>([]);
+  useSidebarPaths(paths, setPaths);
 
   const handleScroll = () => {
     const currentScrollPos = window.scrollY;
@@ -26,37 +29,6 @@ const Sidebar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [prevScrollPos]);
-
-  useEffect(() => {
-    if (paths.length) {
-      localStorage.setItem("sidebarPaths", JSON.stringify(paths));
-    }
-  }, [paths]);
-
-  useEffect(() => {
-    const storedPaths = localStorage.getItem("sidebarPaths");
-    if (storedPaths) {
-      setPaths(JSON.parse(storedPaths));
-    } else {
-      setPaths(defaultPaths);
-    }
-  }, []);
-
-  const handleCheckboxChange = (index: number) => {
-    setPaths((prevPaths) => {
-      const newPaths = [...prevPaths];
-
-      if (newPaths[index].required) {
-        return newPaths;
-      }
-
-      newPaths[index] = {
-        ...newPaths[index],
-        included: !newPaths[index].included,
-      };
-      return newPaths;
-    });
-  };
 
   return (
     <>
@@ -77,7 +49,13 @@ const Sidebar = () => {
                 </div>
                 <div
                   className={st.option__button}
-                  onClick={() => path(opt.path)}
+                  onClick={() => {
+                    let com = opt.path
+                      .split("/")
+                      .map((p) => (p === "userId" ? user.user._id : p))
+                      .join("/");
+                    return path(com);
+                  }}
                 >
                   <div className={st.icon}>
                     {createElement(pathsIcons[opt.icon])}
@@ -91,36 +69,12 @@ const Sidebar = () => {
           </Fragment>
         ))}
       </nav>
-      <Modal visible={isClicked} setVisible={setIsClicked}>
-        <div>
-          {paths.map((opt, index) => (
-            <div key={opt.title}>
-              {opt.required ? (
-                <input
-                  type='checkbox'
-                  checked={opt.included}
-                  disabled
-                  onChange={() => handleCheckboxChange(index)}
-                />
-              ) : (
-                <input
-                  type='checkbox'
-                  defaultChecked={opt.included}
-                  onChange={() => handleCheckboxChange(index)}
-                />
-              )}
-              <div key={opt.title} className={st.option}>
-                <div className={st.option__button}>
-                  <div className={st.icon}>
-                    {createElement(pathsIcons[opt.icon])}
-                  </div>
-                  <div>{opt.title}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
+      <SidebarOptions
+        paths={paths}
+        setPaths={setPaths}
+        isClicked={isClicked}
+        setIsClicked={setIsClicked}
+      />
     </>
   );
 };

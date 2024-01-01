@@ -27,7 +27,7 @@ class PostController {
     try {
       const userId = req.params.userId;
       const content = req.body.content;
-      const files = req.files ? req.files.picture : null;
+      const files = req.files ? req.files : null;
       const post = await postService.createPost(userId, content, files);
       return res.json(post);
     } catch (e) {

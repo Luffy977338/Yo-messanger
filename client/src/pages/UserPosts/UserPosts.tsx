@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import LoadPost from "../../components/UI/LoadPost/LoadPost";
-import Post from "../../components/UI/Post/Post";
+import Post from "../../components/Post/Post";
 import UserBanner from "../../components/UI/UserBanner/UserBanner";
 import UserFriends from "../../components/UserFriends/UserFriends";
 import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
@@ -43,18 +43,20 @@ const UserPosts = () => {
 
   return (
     <div>
-      <UserBanner userCreator={data} isLoading={isLoading} />
+      <UserBanner />
       <div style={{ display: "flex" }}>
         <div className={st.user}>
           <div style={{ display: "flex" }}>
             <div>
+              {isMyPage && (
+                <Form setQueryKey={setQueryKey} isLoading={isLoading} />
+              )}
               {isLoading ? (
                 <LoadPost />
               ) : (
-                <>
-                  {data.posts.length ? (
-                    <div className={st.userPosts}>
-                      {isMyPage ? <Form setQueryKey={setQueryKey} /> : ""}
+                <div className={st.userPosts}>
+                  {data.posts?.length ? (
+                    <>
                       {data.posts.map((post: IPost, index: number) => {
                         if (index <= limit) {
                           return (
@@ -63,26 +65,23 @@ const UserPosts = () => {
                               userCreator={data}
                               canDelete={isMyPage}
                               post={post}
+                              setQueryKey={setQueryKey}
                             />
                           );
                         }
                         return "";
                       })}
-                    </div>
+                    </>
                   ) : (
                     <div>Нет постов</div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>
         </div>
         <div>
-          <UserFriends
-            isLoading={isLoading}
-            id={`${id}`}
-            username={data?.username}
-          />
+          <UserFriends id={id} />
         </div>
       </div>
     </div>

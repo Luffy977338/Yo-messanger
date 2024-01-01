@@ -1,13 +1,26 @@
-import React from "react";
+import React, { CSSProperties, useEffect } from "react";
 import st from "./Modal.module.scss";
 
 interface ModalProps {
   children: React.ReactNode;
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  style?: CSSProperties;
 }
 
-const Modal = ({ children, visible, setVisible }: ModalProps) => {
+const Modal = ({ children, visible, setVisible, style }: ModalProps) => {
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
+
+    return () => {
+      document.body.style.overflow = "visible";
+    };
+  }, [visible]);
+
   const visibleClass = [st.myModal];
 
   if (visible === true) {
@@ -19,10 +32,13 @@ const Modal = ({ children, visible, setVisible }: ModalProps) => {
       className={visibleClass.join(" ")}
       onClick={() => {
         setVisible(false);
-        console.log("false");
       }}
     >
-      <div className={st.myModalContent} onClick={(e) => e.stopPropagation()}>
+      <div
+        style={style}
+        className={st.myModalContent}
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
       </div>
     </div>

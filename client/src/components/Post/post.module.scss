@@ -1,9 +1,6 @@
-@import "../../../color-variables.scss";
-
 .post {
   box-sizing: border-box;
-  /* margin-bottom: 30px; */
-  padding: 35px 40px;
+  padding: 40px 40px;
   min-height: 10px;
   width: 600px;
   border-radius: 15px;
@@ -13,6 +10,7 @@
 
   &__content {
     margin-top: 40px;
+    margin-bottom: 30px;
     word-wrap: break-word;
   }
 
@@ -73,24 +71,4 @@
   .img__margin {
     margin-top: 40px;
   }
-}
-
-.post__content_tiny {
-  font-size: 14px;
-}
-
-.post__content_small {
-  font-size: 20px;
-}
-
-.post__content_average {
-  font-size: 26px;
-}
-
-.post__content_big {
-  font-size: 32px;
-}
-
-.post__content_biggest {
-  font-size: 38px;
 }

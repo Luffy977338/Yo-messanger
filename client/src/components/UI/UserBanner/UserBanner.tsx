@@ -3,21 +3,27 @@ import { API_URL } from "../../../http";
 import Friendship from "../../Friendship/Friendship";
 import user from "../../../store/user";
 import { observer } from "mobx-react-lite";
-import { useLocation, useNavigate } from "react-router-dom";
-import { IUser } from "../../../interfaces/user.interface";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import Modal from "../Modal/Modal";
 import SendMessageByBanner from "../../SendMessageByBanner/SendMessageByBanner";
+import { useQuery } from "@tanstack/react-query";
+import $api from "../../../http";
 
-interface UserBannerProps {
-  userCreator: IUser;
-  isLoading: boolean;
-}
-
-const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
+const UserBanner = () => {
+  const { id } = useParams();
   const [isClicked, setIsClicked] = React.useState(false);
   const path = useNavigate();
   const location = useLocation();
+
+  const getUser = async () => {
+    const data = await $api.get(`/${id}`);
+    return data;
+  };
+
+  const { data, isLoading } = useQuery(["userBanner", id], getUser, {
+    select: ({ data }) => data,
+  });
 
   React.useEffect(() => {
     setIsClicked(false);
@@ -31,7 +37,7 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
         src={
           isLoading
             ? `${API_URL}/default-user-avatar.jpg`
-            : `${API_URL}/${userCreator.avatar}`
+            : `${API_URL}/${data?.avatar}`
         }
         alt=''
       />
@@ -44,10 +50,8 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
             </>
           ) : (
             <>
-              <p className={st.banner__info_username}>{userCreator.username}</p>
-              <p className={st.banner__info_description}>
-                {userCreator.description}
-              </p>
+              <p className={st.banner__info_username}>{data?.username}</p>
+              <p className={st.banner__info_description}>{data?.description}</p>
             </>
           )}
         </div>
@@ -55,7 +59,7 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
           <div className={st.fetchEdit}></div>
         ) : (
           <>
-            {user.user._id === userCreator._id ? (
+            {user.user._id === data._id ? (
               <div className={st.edit}>
                 <button onClick={() => path(`/edit`)} className={st.edit__btn}>
                   Редактировать профиль
@@ -79,10 +83,7 @@ const UserBanner = ({ userCreator, isLoading }: UserBannerProps) => {
       </div>
       {isClicked ? (
         <Modal setVisible={setIsClicked} visible={isClicked}>
-          <SendMessageByBanner
-            setIsClicked={setIsClicked}
-            userCreator={userCreator}
-          />
+          <SendMessageByBanner setIsClicked={setIsClicked} userCreator={data} />
         </Modal>
       ) : (
         ""

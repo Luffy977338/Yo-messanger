@@ -1,0 +1,39 @@
+.path {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+
+  &:nth-of-type(1) {
+    border-radius: 15px 15px 0 0;
+  }
+
+  &:nth-last-of-type(1) {
+    border-radius: 0 0 15px 15px;
+  }
+
+  &:hover {
+    background: var(--light-dark);
+  }
+
+  .icon {
+    color: var(--blue-icon);
+  }
+
+  .option {
+    display: grid;
+    align-items: center;
+    gap: 10px;
+    transition: 0.1s;
+    border-radius: 10px;
+    font-size: 20px;
+
+    &__button {
+      display: flex;
+      gap: 10px;
+      padding: 10px 30px 10px 0;
+    }
+  }
+}

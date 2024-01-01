@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useLike, useRemoveLike } from "../../../hooks/LikesHooks";
 import user from "../../../store/user";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import st from "./like-button.module.scss";
 import socket from "../../../store/socket";
 import { IUser } from "../../../interfaces/user.interface";
 import { observer } from "mobx-react-lite";
+import { useLike, useRemoveLike } from "../../../hooks/PostHooks";
 
 const LikeButton = ({
   postId,

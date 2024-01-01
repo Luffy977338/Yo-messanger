@@ -34,11 +34,11 @@ const NotificationToast = ({
         </p>
         <div className={st.post}>
           <p className={st.post__content}>{notification.post?.content}</p>
-          {notification.post?.picture ? (
+          {notification.post?.pictures.length ? (
             <img
               className={st.post__picture}
               width={100}
-              src={`${API_URL}/${notification.post.picture}`}
+              src={`${API_URL}/${notification.post.pictures[0]}`}
               alt=''
             />
           ) : (

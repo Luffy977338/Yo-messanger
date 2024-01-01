@@ -43,27 +43,33 @@ class PostService {
     return post;
   }
 
-  async createPost(userId, content, picture) {
-    if (!content && !picture) {
+  async createPost(userId, content, files) {
+    let map;
+    files ? (map = new Map(Object.entries(files))) : null;
+
+    if (!content && !files) {
       throw ApiError.BadRequest("Пост не может быть пустым");
     }
 
     if (!userId) {
-      throw ApiError.BadRequest("Пользователь не найден");
+      throw ApiError.BadRequest(ERROR.userNotFound);
     }
 
     const updatedFields = {
       userCreator: userId,
       content,
+      pictures: [],
     };
 
-    if (picture) {
-      const pictureExt = path.extname(picture.name);
-      if (pictureExt !== ".png" && pictureExt !== ".jpg") {
-        throw ApiError.BadRequest("Формат файла не поддерживается");
-      } else {
+    if (map) {
+      if (map.size >= 9) throw ApiError.BadRequest("Слишком много фотографий");
+      for (const picture of map.values()) {
+        const pictureExtension = path.extname(picture.name);
+        if (pictureExtension !== ".png" && pictureExtension !== ".jpg") {
+          throw ApiError.BadRequest("Формат файла не поддерживается");
+        }
         const pictureFile = fileService.saveFile(picture);
-        updatedFields.picture = pictureFile;
+        updatedFields.pictures.push(pictureFile);
       }
     }
 
@@ -83,9 +89,9 @@ class PostService {
     return post;
   }
 
-  async deletePost(userId, postId, fileName) {
-    await notificationService.deleteNotificationByPostId(postId);
+  async deletePost(userId, postId) {
     const post = await postModel.findByIdAndDelete(postId);
+    await notificationService.deleteNotificationByPostId(postId);
     await userModel.findByIdAndUpdate(
       userId,
       {
@@ -93,9 +99,13 @@ class PostService {
       },
       { new: true },
     );
-    if (fileName) {
-      fileService.deleteFile(fileName);
+
+    if (!!post.pictures.length) {
+      for (let picture of post.pictures) {
+        fileService.deleteFile(picture);
+      }
     }
+
     return post;
   }
 

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
-import PopUpAnimation from "../../animations/PopUp.animation";
+import { MPopUpAnimation } from "../../animations/PopUp.animation";
 import { INotification } from "../../interfaces/notification.interface";
 import st from "./notifications.module.scss";
 import Notification from "../UI/Notification/Notification";
@@ -14,12 +14,16 @@ import {
 } from "../../hooks/NotificationsHooks";
 import { useClickAway } from "../../hooks/useClickAway";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
+import { useChangeLocation } from "../../hooks/useChangeLocation";
 
 const Notifications = () => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null);
   const notificationsBarRef = useRef<HTMLDivElement | null>(null);
+  const path = useNavigate();
+  useChangeLocation(() => setIsClicked(false));
 
   const {} = useQuery(
     ["notifications", user.user._id],
@@ -73,7 +77,7 @@ const Notifications = () => {
         {isClicked ? (
           <motion.div
             ref={notificationsBarRef}
-            variants={PopUpAnimation}
+            variants={MPopUpAnimation}
             initial='from'
             animate='to'
             exit='from'
@@ -83,18 +87,20 @@ const Notifications = () => {
             {notifications.length ? (
               <>
                 {notifications.map((n, index) =>
-                  index <= 10 ? (
-                    <Notification
-                      key={index}
-                      setIsOpen={setIsClicked}
-                      notification={n}
-                    />
+                  index <= 7 ? (
+                    <Notification key={index} notification={n} />
                   ) : (
                     ""
                   ),
                 )}
-                {notifications.length > 10 ? (
-                  <button className={st.notifications__button}>
+                {notifications.length > 7 ? (
+                  <button
+                    onClick={() => {
+                      setIsClicked(false);
+                      path("/notifications");
+                    }}
+                    className={st.notifications__button}
+                  >
                     Показать все уведомления
                   </button>
                 ) : (

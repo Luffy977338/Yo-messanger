@@ -10,10 +10,10 @@ const ApiError = require("../exceptions/api-error.js");
 const ERROR = require("../constants/ERROR.js");
 
 const isEmailService =
-  process.env.SMTP_PASSWORD &&
-  process.env.SMTP_USER &&
-  process.env.SMTP_PORT &&
-  process.env.SMTP_HOST;
+  !!process.env.SMTP_PASSWORD &&
+  !!process.env.SMTP_USER &&
+  !!process.env.SMTP_PORT &&
+  !!process.env.SMTP_HOST;
 
 class UserAuthService {
   async registration(username, email, password) {

@@ -2,6 +2,7 @@ const ERROR = require("../constants/ERROR");
 const UserDto = require("../dtos/user.dto");
 const ApiError = require("../exceptions/api-error");
 const notificationModel = require("../models/notification.model");
+const postModel = require("../models/post.model");
 const userModel = require("../models/user.model");
 
 class NotificationService {
@@ -10,6 +11,12 @@ class NotificationService {
 
     if (!user) {
       throw ApiError.NotFound(ERROR.userNotFound);
+    }
+
+    const post = await postModel.findById(postId);
+
+    if (!post) {
+      throw ApiError.NotFound(ERROR.postNotFound);
     }
 
     const userDto = new UserDto(user);
@@ -67,10 +74,6 @@ class NotificationService {
     const notification = await notificationModel.deleteMany({
       post: postId,
     });
-
-    if (!notification.deletedCount) {
-      throw ApiError.NotFound(ERROR.notificationNotFound);
-    }
 
     return notification;
   }

@@ -8,15 +8,15 @@ module.exports = class ApiError extends Error {
     this.errors = errors;
   }
 
-  static UnauthorizedError() {
-    return new ApiError(401, "user doesn't authorized");
+  static UnauthorizedError(message = "Пользовательне не авторизован") {
+    return new ApiError(401, message);
   }
 
-  static BadRequest(message, errors = []) {
+  static BadRequest(message = "Неккоректно веденные данные", errors = []) {
     return new ApiError(400, message, errors);
   }
 
-  static NotFound(message, errors = []) {
+  static NotFound(message = "Не найдено", errors = []) {
     return new ApiError(404, message, errors);
   }
 
