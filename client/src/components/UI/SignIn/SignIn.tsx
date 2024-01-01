@@ -23,7 +23,6 @@ const SignIn = React.memo(
       {
         onSuccess: (data) => {
           path("/posts");
-          console.log(data);
           localStorage.setItem("token", data.data.accessToken);
           user.setUser(data.data.user);
         },

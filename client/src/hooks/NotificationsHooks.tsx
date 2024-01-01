@@ -7,16 +7,8 @@ import NotificationToast from "../components/UI/NotificationToast/NotificationTo
 import toast from "react-hot-toast";
 
 export function useMakeNotificationViewed() {
-  return useMutation(
-    (id: string) => UserActionsService.makeNotificationViewed(id),
-    {
-      onSuccess: () => {
-        console.log("success");
-      },
-      onError: () => {
-        console.log("error");
-      },
-    },
+  return useMutation((id: string) =>
+    UserActionsService.makeNotificationViewed(id),
   );
 }
 
@@ -24,7 +16,6 @@ export function useNotification(
   setNotifications: Dispatch<SetStateAction<INotification[]>>,
 ) {
   const handleNewNotification = (notification: INotification) => {
-    console.log(notification);
     setNotifications((prev) => [notification, ...prev]);
     toast((t) => <NotificationToast t={t} notification={notification} />);
   };

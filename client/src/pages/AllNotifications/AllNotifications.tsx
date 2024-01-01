@@ -21,11 +21,15 @@ const AllNotifications = () => {
       {isLoading ? (
         <Loader />
       ) : data ? (
-        <div className={st.notifications}>
-          {data.notifications?.map((notif: INotification, index: number) => (
-            <Notification key={index} notification={notif} />
-          ))}
-        </div>
+        <>
+          {!!data.notifications.length && (
+            <div className={st.notifications}>
+              {data.notifications.map((notif: INotification, index: number) => (
+                <Notification key={index} notification={notif} />
+              ))}
+            </div>
+          )}
+        </>
       ) : (
         ""
       )}

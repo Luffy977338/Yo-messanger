@@ -6,7 +6,7 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import Authorization from "./pages/Authorization/Authorization";
 import Messages from "./pages/Messages/Messages";
 import AllNotifications from "./pages/AllNotifications/AllNotifications";
-import Settings from "./pages/Settings/Settings";
+import UserSettings from "./pages/UserSettings/UserSettings";
 
 const routes: IRoute[] = [
   { path: "/posts", component: AllPosts },
@@ -19,7 +19,7 @@ const routes: IRoute[] = [
   { path: "/auth", component: Authorization },
   { path: "/messages", component: Messages },
   { path: "/notifications", component: AllNotifications },
-  { path: "/settings", component: Settings },
+  { path: "/settings", component: UserSettings },
 ];
 
 export default routes;
