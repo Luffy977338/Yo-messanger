@@ -7,6 +7,7 @@ import { SlCamera } from "react-icons/sl";
 import toast from "react-hot-toast";
 import PostFormSlider from "../UI/PostFormSlider/PostFormSlider";
 import { useCreatePost } from "../../hooks/PostHooks";
+import { validImageTypes } from "../../constants/validImageTypes";
 
 const Form = ({
   setQueryKey,
@@ -17,7 +18,19 @@ const Form = ({
 }) => {
   const [content, setContent] = React.useState<string>("");
   const [pictures, setPictures] = React.useState<File[] | []>([]);
-  const mutation = useCreatePost({ setContent, setPictures, setQueryKey });
+  const createPost = useCreatePost({ setContent, setPictures, setQueryKey });
+
+  const handlePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedPicture = event.target.files ? event.target.files[0] : null;
+
+    if (selectedPicture) {
+      console.log(selectedPicture.type);
+      if (validImageTypes.includes(selectedPicture.type)) {
+        return setPictures((prev) => [...prev, selectedPicture]);
+      }
+      console.error("Invalid file type. Please choose a valid image.");
+    }
+  };
 
   const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,20 +43,10 @@ const Form = ({
       });
     }
 
-    toast.promise(mutation.mutateAsync(formData), {
+    toast.promise(createPost.mutateAsync(formData), {
       loading: "Проверка поста",
       success: "Пост опубликован",
-      error: (data) => `${data.response.data.message}` || "Что-то пошло не так",
-    });
-  };
-
-  const handlePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedPicture = event.target.files ? event.target.files[0] : null;
-    setPictures((prev) => {
-      if (selectedPicture) {
-        return [...prev, selectedPicture];
-      }
-      return [...prev];
+      error: (data) => `${data.response.data.message || "Что-то пошло не так"}`,
     });
   };
 
@@ -64,7 +67,7 @@ const Form = ({
             className={st.postForm__data_input}
             type='text'
             value={content}
-            disabled={mutation.isLoading || isLoading}
+            disabled={createPost.isLoading || isLoading}
             maxLength={3000}
             onChange={(e) => {
               setContent(e.target.value);
@@ -88,9 +91,9 @@ const Form = ({
           <button
             className={st.postForm__tools_button}
             type='submit'
-            disabled={mutation.isLoading || isLoading}
+            disabled={createPost.isLoading || isLoading}
           >
-            {mutation.isLoading ? "Сохранение" : "Сохранить"}
+            {createPost.isLoading ? "Сохранение" : "Сохранить"}
           </button>
         </div>
       </div>

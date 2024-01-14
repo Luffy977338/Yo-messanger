@@ -42,13 +42,13 @@ const Notification = ({ notification }: { notification: INotification }) => {
         </div>
         {notification.post ? (
           <div className={st.notification__post}>
-            {notification.post.content && (
+            {!!notification.post.content.length && (
               <div className={st.notification__post_content}>
                 {notification.post.content}
               </div>
             )}
             <div>
-              {notification.post.pictures && (
+              {!!notification.post.pictures.length && (
                 <img
                   className={st.notification__post_picture}
                   width={150}

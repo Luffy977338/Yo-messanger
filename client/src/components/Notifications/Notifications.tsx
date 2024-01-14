@@ -1,16 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MPopUpAnimation } from "../../animations/PopUp.animation";
 import { INotification } from "../../interfaces/notification.interface";
 import st from "./notifications.module.scss";
 import Notification from "../UI/Notification/Notification";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { useQuery } from "@tanstack/react-query";
-import $api from "../../http";
-import user from "../../store/user";
 import {
+  useGetNotifications,
   useMakeNotificationViewed,
-  useNotification,
+  useNewNotifications,
 } from "../../hooks/NotificationsHooks";
 import { useClickAway } from "../../hooks/useClickAway";
 import { observer } from "mobx-react-lite";
@@ -25,18 +23,13 @@ const Notifications = () => {
   const path = useNavigate();
   useChangeLocation(() => setIsClicked(false));
 
-  const {} = useQuery(
-    ["notifications", user.user._id],
-    () => {
-      return $api.get(`/${user.user._id}`);
-    },
-    {
-      select: (data) => data.data,
-      onSuccess: (data) => {
-        setNotifications([...data?.notifications]);
-      },
-    },
-  );
+  const { isSuccess, data, isFetching } = useGetNotifications();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setNotifications([...data]);
+    }
+  }, [isFetching]);
 
   const makeNotificationViewed = useMakeNotificationViewed();
 
@@ -54,7 +47,7 @@ const Notifications = () => {
     });
   };
 
-  useNotification(setNotifications);
+  useNewNotifications(setNotifications);
   useClickAway(setIsClicked, [notificationsButtonRef, notificationsBarRef]);
 
   return (
@@ -108,7 +101,7 @@ const Notifications = () => {
                 )}
               </>
             ) : (
-              "Нет уведомлений"
+              <div style={{ margin: 20 }}>Нет уведомнелий</div>
             )}
           </motion.div>
         ) : (

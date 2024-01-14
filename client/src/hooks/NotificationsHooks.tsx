@@ -1,18 +1,26 @@
-import { useMutation } from "@tanstack/react-query";
-import UserActionsService from "../service/user-actions.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { INotification } from "../interfaces/notification.interface";
 import socket from "../store/socket";
 import NotificationToast from "../components/UI/NotificationToast/NotificationToast";
 import toast from "react-hot-toast";
+import NotificationService from "../service/notification.service";
+import user from "../store/user";
+import { TNotificationTypes } from "../interfaces/notification-types.interface";
 
-export function useMakeNotificationViewed() {
-  return useMutation((id: string) =>
-    UserActionsService.makeNotificationViewed(id),
+export function useGetNotifications() {
+  return useQuery(
+    ["notifications", user.user._id],
+    NotificationService.getNotifications,
+    { select: ({ data }) => data },
   );
 }
 
-export function useNotification(
+export function useMakeNotificationViewed() {
+  return useMutation(NotificationService.makeNotificationViewed);
+}
+
+export function useNewNotifications(
   setNotifications: Dispatch<SetStateAction<INotification[]>>,
 ) {
   const handleNewNotification = (notification: INotification) => {
@@ -31,4 +39,12 @@ export function useNotification(
       }
     };
   }, [socket.socket]);
+}
+
+export function useCreateNewNotification() {
+  return function (type: TNotificationTypes, options: unknown) {
+    if (socket.socket) {
+      socket.socket.emit(type, options);
+    }
+  };
 }

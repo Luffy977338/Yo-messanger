@@ -1,4 +1,5 @@
 import React from "react";
+import debounce from "../utils/debouce";
 
 export const useInfiniteQueryScrolling = (
   refOrWindow: any,
@@ -6,6 +7,13 @@ export const useInfiniteQueryScrolling = (
   offset: number = 1000,
   type: "default" | "reverse" = "default",
 ) => {
+  const callbackHandler = React.useCallback(
+    debounce(() => {
+      callback();
+    }, 200),
+    [callback],
+  );
+
   React.useEffect(() => {
     const target = refOrWindow.current || window;
 
@@ -29,7 +37,7 @@ export const useInfiniteQueryScrolling = (
       }
 
       if (isScrolledPastOffset) {
-        callback();
+        callbackHandler();
       }
     };
 
@@ -38,5 +46,5 @@ export const useInfiniteQueryScrolling = (
     return () => {
       target.removeEventListener("scroll", handleScroll);
     };
-  }, [refOrWindow, callback, offset]);
+  }, [refOrWindow, callbackHandler, offset, type]);
 };

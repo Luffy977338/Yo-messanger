@@ -1,0 +1,20 @@
+.closed {
+  display: flex;
+  align-items: center;
+  background: var(--light-dark);
+  padding: 25px 15px;
+  border: 1px solid var(--primary-color);
+  border-radius: 15px;
+
+  &__lock {
+    font-size: 62px;
+    color: #3e3e3e;
+    margin-right: 15px;
+  }
+
+  &__message {
+    color: rgb(103, 103, 103);
+    font-size: 20px;
+    line-height: 1.3;
+  }
+}

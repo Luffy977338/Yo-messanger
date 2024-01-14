@@ -1,61 +1,67 @@
 @import "../../color-variables.scss";
 
 .friends__wrap {
-   width: 600px;
-   display: flex;
-   flex-direction: column;
-   min-height: 600px;
-   background: var(--light-dark);
-   padding: 30px 20px;
-   border-radius: 15px;
-   border: 1px solid var(--primary-color);
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
+  max-height: 850px;
+  background: var(--light-dark);
+  padding: 30px 20px;
+  border-radius: 15px;
+  border: 1px solid var(--primary-color);
 
-   hr {
-      margin: 30px 0 30px 0;
-      padding: 0 20px;
-   }
+  hr {
+    margin: 30px 0 30px 0;
+    padding: 0 20px;
+  }
 
-   .panel__navigation {
-      display: flex;
-      justify-content: space-around;
-      position: relative;
-      overflow: hidden;
+  .panel__navigation {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    overflow: hidden;
+    z-index: 5;
+
+    .panel__background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 33.33%;
+      height: 100%;
+      background: var(--primary-color);
+      transition: 0.3s ease;
+      z-index: 3;
+    }
+
+    .panel__background_subscribers {
+      left: 33.33%;
+    }
+
+    .panel__background_subscriptions {
+      left: 66.66%;
+    }
+
+    div {
+      padding: 8px 25px 10px 25px;
+      border-radius: 10px;
+      width: 33.33%;
+      user-select: none;
+      text-align: center;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
       z-index: 5;
+    }
+  }
 
-      .panel__background {
-         position: absolute;
-         top: 0;
-         left: 0;
-         width: 33.33%;
-         height: 100%;
-         background: var(--primary-color);
-         transition: 0.3s ease;
-         z-index: 3;
-      }
+  .users {
+    display: flex;
+    padding: 0 30px 0 10px;
+    flex-direction: column;
 
-      .panel__background_subscribers {
-         left: 33.33%;
-      }
-
-      .panel__background_subscriptions {
-         left: 66.66%;
-      }
-
-      div {
-         padding: 8px 25px 10px 25px;
-         border-radius: 10px;
-         width: 33.33%;
-         user-select: none;
-         text-align: center;
-         cursor: pointer;
-         font-size: 16px;
-         font-weight: 600;
-         z-index: 5;
-      }
-   }
-
-   .users {
-      display: flex;
-      flex-direction: column;
-   }
+    &::-webkit-scrollbar-track {
+      background: var(--light-dark);
+    }
+  }
 }

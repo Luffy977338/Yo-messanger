@@ -1,32 +1,30 @@
 import { AxiosResponse } from "axios";
 import $api from "../http";
-import user from "../store/user";
 
 export default class PostService {
+  static async getAllUserPosts({ pageParam = 1 }, userId?: string) {
+    const response = await $api.get(`/posts/user/${userId}?page=${pageParam}`);
+    return response.data;
+  }
+
   static async deletePost(data: { id: string; fileName: string | null }) {
-    return $api.delete(`/posts/${user.user._id}/${data.id}`, { data });
+    return $api.delete(`/posts/${data.id}`, { data });
   }
 
   static async getOnePost(postId: string) {
     return $api.get(`/posts/${postId}`);
   }
 
-  static async likePost(
-    postId: string,
-    userId: string,
-  ): Promise<AxiosResponse<any>> {
-    return $api.post(`/posts/like/${postId}/${userId}`);
+  static async likePost(postId: string): Promise<AxiosResponse<any>> {
+    return $api.post(`/posts/like/${postId}`);
   }
 
-  static async removeLikePost(
-    postId: string,
-    userId: string,
-  ): Promise<AxiosResponse<any>> {
-    return $api.post(`/posts/removeLike/${postId}/${userId}`);
+  static async removeLikePost(postId: string): Promise<AxiosResponse<any>> {
+    return $api.delete(`/posts/removeLike/${postId}`);
   }
 
-  static async createdPost(newPost: any): Promise<AxiosResponse<any>> {
-    const response = await $api.post(`/posts/${user.user._id}`, newPost);
+  static async createPost(newPost: any): Promise<AxiosResponse<any>> {
+    const response = await $api.post(`/posts`, newPost);
     return response.data;
   }
 }

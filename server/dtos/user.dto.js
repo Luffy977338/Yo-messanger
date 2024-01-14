@@ -10,6 +10,7 @@ module.exports = class UserDto {
   posts;
   recentChatUsers;
   notifications;
+  settings;
 
   constructor(model) {
     this.avatar = model.avatar;
@@ -24,5 +25,6 @@ module.exports = class UserDto {
     this.posts = model.posts;
     this.recentChatUsers = model.recentChatUsers;
     this.notifications = model.notifications;
+    this.settings = model.settings;
   }
 };

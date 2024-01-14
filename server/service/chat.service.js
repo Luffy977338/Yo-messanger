@@ -1,7 +1,9 @@
 const chatModel = require("../models/chat.model.js");
 const messageModel = require("../models/message.model.js");
-const userModel = require("../models/user.model.js");
+const UserModel = require("../models/user.model.js");
 const UserDto = require("../dtos/user.dto.js");
+const ApiError = require("../exceptions/api-error.js");
+const ERROR = require("../constants/ERROR.js");
 
 class ChatService {
   async getChat(roomId, perPage, page) {
@@ -23,12 +25,14 @@ class ChatService {
     }
     let totalPages = 0;
 
-    if (roomId.split("_").length === 2) {
-      const totalCount = await chatModel.findOne({ roomId });
-      totalPages = totalCount.messages.length
+    if (!(roomId.split("_").length === 2))
+      throw ApiError.BadRequest(ERROR.roomIdMustHaveTwoIds);
+
+    const totalCount = await chatModel.findOne({ roomId });
+    totalPages =
+      totalCount && totalCount.messages.length
         ? Math.ceil(totalCount.messages.length / perPage)
         : 0;
-    }
 
     return {
       chat,
@@ -48,21 +52,21 @@ class ChatService {
     });
 
     await chatModel.findOneAndUpdate(
-      { roomId: roomId },
+      { roomId },
       { $addToSet: { messages: newMessage } },
       { upsert: true },
     );
 
-    const messageToUser = await userModel.findById(messageToId);
+    const messageToUser = await UserModel.findById(messageToId);
     const messageToUserDto = new UserDto(messageToUser);
 
-    const existingRecentChatUser = await userModel.findOne({
+    const existingRecentChatUser = await UserModel.findOne({
       _id: message.creatorId,
       "recentChatUsers.user": messageToUserDto._id,
     });
 
     if (existingRecentChatUser) {
-      await userModel.updateOne(
+      await UserModel.updateOne(
         {
           _id: message.creatorId,
           "recentChatUsers.user": messageToUserDto._id,
@@ -75,7 +79,7 @@ class ChatService {
         { new: true },
       );
     } else {
-      await userModel.findByIdAndUpdate(
+      await UserModel.findByIdAndUpdate(
         message.creatorId,
         {
           $addToSet: {
@@ -89,13 +93,13 @@ class ChatService {
       );
     }
 
-    const existingRecentChatUserMessageTo = await userModel.findOne({
+    const existingRecentChatUserMessageTo = await UserModel.findOne({
       _id: messageToId,
       "recentChatUsers.user": messageCreatorDto,
     });
 
     if (existingRecentChatUserMessageTo) {
-      await userModel.updateOne(
+      await UserModel.updateOne(
         {
           _id: messageToId,
           "recentChatUsers.user": messageCreatorDto,
@@ -107,7 +111,7 @@ class ChatService {
         },
       );
     } else {
-      await userModel.findByIdAndUpdate(
+      await UserModel.findByIdAndUpdate(
         messageToId,
         {
           $addToSet: {

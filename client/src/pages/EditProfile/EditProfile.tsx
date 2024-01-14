@@ -1,7 +1,7 @@
 import React from "react";
 import st from "./edit-profile.module.scss";
 import { useMutation } from "@tanstack/react-query";
-import UserActionsService from "../../service/user-actions.service";
+import UserService from "../../service/user.service";
 import user from "../../store/user";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ const EditProfile = () => {
   const [avatar, setAvatar] = React.useState<File | null | undefined>(null);
   const path = useNavigate();
 
-  const editProfileMutation = useMutation(UserActionsService.editProfile, {
+  const editProfileMutation = useMutation(UserService.editProfile, {
     onSuccess: (data) => {
       path("/posts");
       user.setUser(data.data);

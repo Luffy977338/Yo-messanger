@@ -7,21 +7,20 @@ import { checkLetterCount } from "../../utils/fontSizeChecker";
 import LikeButton from "../UI/LikeButton/LikeButton";
 import PostOptions from "../PostOptions/PostOptions";
 import { usePostDate } from "../../hooks/PostHooks";
-import { Dispatch, SetStateAction } from "react";
 import PostSlider from "../UI/PostSlider/PostSlider";
 
 export interface PostProps {
   post: IPost;
   userCreator: any;
   canDelete?: boolean;
-  setQueryKey?: Dispatch<SetStateAction<any>>;
+  beforeDelete?: Function;
 }
 
 const Post = ({
   post,
   userCreator,
   canDelete = false,
-  setQueryKey,
+  beforeDelete,
 }: PostProps) => {
   const path = useNavigate();
   const date = usePostDate(post.createdAt);
@@ -54,7 +53,7 @@ const Post = ({
         <PostOptions
           canDelete={canDelete}
           id={post._id}
-          setQueryKey={setQueryKey}
+          beforeDelete={beforeDelete}
         />
       </div>
       <div>

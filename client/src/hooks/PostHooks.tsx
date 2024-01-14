@@ -1,20 +1,33 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryKey,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import PostService from "../service/post.service";
-import user from "../store/user";
 import { monthNames } from "../constants/month";
 import { Dispatch, SetStateAction } from "react";
 
-export function useDeletePost({
-  setQueryKey,
-}: {
-  setQueryKey?: Dispatch<SetStateAction<any>>;
-}) {
+export function useGetUserPosts(queryKey: QueryKey, userId?: string) {
+  return useInfiniteQuery({
+    queryKey,
+    queryFn: ({ pageParam = 0 }) =>
+      PostService.getAllUserPosts({ pageParam }, userId),
+    getNextPageParam: (lastPage) => {
+      const { currentPage, totalPages } = lastPage.pagination;
+      if (!currentPage && currentPage !== 0) return false;
+      return currentPage >= totalPages ? false : currentPage + 1;
+    },
+    retry: 0,
+  });
+}
+
+export function useDeletePost(beforeDelete?: Function) {
   const queryClient = useQueryClient();
   return useMutation(PostService.deletePost, {
     onSuccess: () => {
-      if (setQueryKey) setQueryKey(["posts", Date.now()]);
-      queryClient.invalidateQueries(["posts"]);
       queryClient.invalidateQueries(["notifications"]);
+      if (beforeDelete) beforeDelete();
     },
   });
 }
@@ -26,7 +39,7 @@ export function useLike(
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
-  return useMutation(() => PostService.likePost(postId, user.user._id), {
+  return useMutation(() => PostService.likePost(postId), {
     onError: () => {
       setLikes(likes - 1);
       setIsLiked(false);
@@ -44,7 +57,7 @@ export function useRemoveLike(
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
-  return useMutation(() => PostService.removeLikePost(postId, user.user._id), {
+  return useMutation(() => PostService.removeLikePost(postId), {
     onError: () => {
       setLikes(likes + 1);
       setIsLiked(true);
@@ -87,7 +100,7 @@ export function useCreatePost({
   setContent: Dispatch<SetStateAction<string>>;
   setPictures: Dispatch<SetStateAction<File[] | []>>;
 }) {
-  return useMutation(PostService.createdPost, {
+  return useMutation(PostService.createPost, {
     onSuccess: () => {
       setQueryKey(["posts", Date.now()]);
       setContent("");

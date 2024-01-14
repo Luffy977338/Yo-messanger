@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const UserSchema = new Schema({
-  avatar: { type: String },
+  avatar: { type: String, required: true },
   username: { type: String, unique: true, required: true },
   description: { type: String },
   email: { type: String, unique: true, required: true },
@@ -20,6 +20,7 @@ const UserSchema = new Schema({
   ],
   notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
   socketId: { type: String },
+  settings: { type: Schema.Types.ObjectId, ref: "Settings", required: true },
 });
 
 module.exports = model("User", UserSchema);

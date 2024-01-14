@@ -1,45 +1,53 @@
 import { useParams } from "react-router-dom";
 import user from "../../store/user";
 import { observer } from "mobx-react-lite";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { Fragment } from "react";
 import LoadPost from "../../components/UI/LoadPost/LoadPost";
 import Post from "../../components/Post/Post";
 import UserBanner from "../../components/UI/UserBanner/UserBanner";
 import UserFriends from "../../components/UserFriends/UserFriends";
 import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
-import $api from "../../http";
-import { IPost } from "../../interfaces/post.interface";
 import st from "./user-posts.module.scss";
 import Form from "../../components/Form/Form";
+import { useGetUserPosts } from "../../hooks/PostHooks";
+import { IPost } from "../../interfaces/post.interface";
+import { useUser } from "../../hooks/useUser";
+import ProfileClosed from "../../components/UI/ProfileClosed/ProfileClosed";
+
+type profileClosedError = { response: { data: { closedProfile: boolean } } };
 
 const UserPosts = () => {
   const { id } = useParams();
   const [queryKey, setQueryKey] = React.useState(["posts", id, Date.now()]);
   const isMyPage = id === user.user._id;
-  const perPage = 8;
-  const [page, setPage] = React.useState<number>(1);
-  const limit = perPage * page;
 
   React.useEffect(() => {
     setQueryKey(["posts", id, Date.now()]);
-    setPage(1);
   }, [id]);
 
-  async function fetchPosts() {
-    const response = await $api.get(`/${id}`);
-    return response.data;
-  }
-
-  const { data, isLoading } = useQuery(queryKey, fetchPosts, {});
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error: dataError,
+  } = useGetUserPosts(queryKey, id);
+  const error = dataError as profileClosedError | null;
 
   useInfiniteQueryScrolling(
     document,
     () => {
-      setPage(page + 1);
+      if (!isFetchingNextPage && hasNextPage) {
+        fetchNextPage();
+      }
     },
-    1200,
+    1400,
   );
+
+  const { data: userData, isLoading: userLoading } = useUser({
+    userId: id as string,
+  });
 
   return (
     <div>
@@ -51,30 +59,43 @@ const UserPosts = () => {
               {isMyPage && (
                 <Form setQueryKey={setQueryKey} isLoading={isLoading} />
               )}
-              {isLoading ? (
+              {isLoading || userLoading ? (
                 <LoadPost />
               ) : (
                 <div className={st.userPosts}>
-                  {data.posts?.length ? (
-                    <>
-                      {data.posts.map((post: IPost, index: number) => {
-                        if (index <= limit) {
-                          return (
-                            <Post
-                              key={post._id}
-                              userCreator={data}
-                              canDelete={isMyPage}
-                              post={post}
-                              setQueryKey={setQueryKey}
-                            />
-                          );
-                        }
-                        return "";
-                      })}
-                    </>
-                  ) : (
-                    <div>Нет постов</div>
-                  )}
+                  {(() => {
+                    if (error?.response.data.closedProfile) {
+                      return <ProfileClosed username={userData?.username} />;
+                    }
+                    if (!data?.pages[0].posts.length) {
+                      return `${
+                        userData?.username === user.user.username
+                          ? "У вас"
+                          : userData?.username
+                          ? `у ${userData.username}`
+                          : "Тут"
+                      } пока что нет постов`;
+                    }
+                    return (
+                      <>
+                        {data.pages.map((page, pageIndex) => (
+                          <Fragment key={pageIndex}>
+                            {page.posts.map((post: IPost) => (
+                              <Post
+                                canDelete={isMyPage}
+                                post={post}
+                                key={post._id}
+                                userCreator={post.userCreator}
+                                beforeDelete={() =>
+                                  setQueryKey(["posts", id, Date.now()])
+                                }
+                              />
+                            ))}
+                          </Fragment>
+                        ))}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
             </div>

@@ -5,27 +5,27 @@ const Router = require("express").Router;
 const router = new Router();
 
 router.post(
-  "/subscribe/:id/:subscriberId",
+  "/subscribe/:id",
   authMiddleware,
   userFriendshipController.subscribe,
 );
 router.post(
-  "/unsubscribe/:id/:subscriberId",
+  "/unsubscribe/:id",
   authMiddleware,
   userFriendshipController.unsubscribe,
 );
 router.post(
-  "/acceptFriend/:id/:subscriberId",
+  "/acceptFriend/:id",
   authMiddleware,
   userFriendshipController.acceptFriend,
 );
 router.post(
-  "/rejectFriend/:id/:subscriberId",
+  "/rejectFriend/:id",
   authMiddleware,
   userFriendshipController.rejectFriend,
 );
 router.post(
-  "/deleteFriend/:id/:subscriberId",
+  "/deleteFriend/:id",
   authMiddleware,
   userFriendshipController.deleteFriend,
 );

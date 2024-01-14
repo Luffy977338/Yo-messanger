@@ -51,9 +51,10 @@ class UserFriendshipService {
   }
 
   async acceptFriend(id, subscriberId) {
+    await this.unsubscribe(subscriberId, id);
     const updatedSubscriber = await UserModel.findByIdAndUpdate(
       subscriberId,
-      { $addToSet: { friends: id }, $pull: { subscriptions: id } },
+      { $addToSet: { friends: id } },
       { new: true },
     )
       .populate("subscriptions")
@@ -64,7 +65,6 @@ class UserFriendshipService {
       id,
       {
         $addToSet: { friends: subscriberId },
-        $pull: { subscribers: subscriberId },
       },
       { new: true },
     )

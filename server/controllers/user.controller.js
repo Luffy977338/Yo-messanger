@@ -1,9 +1,10 @@
-const userActionsService = require("../service/user-actions.service");
 const { validationResult } = require("express-validator");
 const ApiError = require("../exceptions/api-error");
 const notificationService = require("../service/notification.service");
+const userService = require("../service/user.service");
+const tokenService = require("../service/token.service");
 
-class UserActionsController {
+class UserController {
   async editProfile(req, res, next) {
     try {
       const validationErrors = validationResult(req);
@@ -15,11 +16,11 @@ class UserActionsController {
         );
       }
 
-      const id = req.params.id;
+      const { id } = req.params;
       const { username, description, prevAvatar } = req.body;
       const avatar = req.files ? req.files.avatar : null;
 
-      const newData = await userActionsService.editProfile(
+      const newData = await userService.editProfile(
         id,
         username,
         description,
@@ -33,27 +34,19 @@ class UserActionsController {
     }
   }
 
-  async getOneUser(req, res, next) {
+  async getUser(req, res, next) {
     try {
       const id = req.params.id;
-      const user = await userActionsService.getOneUser(id);
+      const reqUser = tokenService.validateAccessToken(
+        req.headers.authorization?.split(" ")[1],
+      );
+      const { user } = await userService.getUserById(id, reqUser);
 
       return res.json(user);
     } catch (e) {
       next(e);
     }
   }
-
-  async makeNotificationViewed(req, res, next) {
-    try {
-      const { id } = req.params;
-      const notification = await notificationService.makeNotificationViewed(id);
-
-      return res.json(notification);
-    } catch (e) {
-      next(e);
-    }
-  }
 }
 
-module.exports = new UserActionsController();
+module.exports = new UserController();

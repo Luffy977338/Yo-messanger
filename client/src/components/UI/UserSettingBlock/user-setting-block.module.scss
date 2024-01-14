@@ -1,0 +1,18 @@
+.settingBlock {
+  background: var(--light-dark);
+  border: 1px solid var(--primary-color);
+  border-radius: 15px;
+  padding: 30px 40px;
+  width: 600px;
+  margin-bottom: 20px;
+
+  &__title {
+    font-size: 22px;
+    color: var(--secondary-color);
+    margin-bottom: 25px;
+  }
+
+  &__children {
+    color: gray;
+  }
+}

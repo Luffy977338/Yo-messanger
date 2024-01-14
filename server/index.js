@@ -10,9 +10,11 @@ const postRouter = require("./router/post.router.js");
 const userAuthRouter = require("./router/user-auth.router.js");
 const errorMiddleware = require("./middlewares/error.middleware.js");
 const userFriendshipRouter = require("./router/user-friendship.router.js");
-const userActionsRouter = require("./router/user-actions.router.js");
+const userRouter = require("./router/user.router.js");
 const chatRouter = require("./router/chat.router.js");
 const WebsocketSetUp = require("./socket/connection.socket.js");
+const settingRouter = require("./router/settings.router.js");
+const notificationRouter = require("./router/notification.router.js");
 
 const PORT = process.env.PORT || 5000;
 
@@ -36,9 +38,11 @@ app.use(
 );
 app.use("/auth", userAuthRouter);
 app.use("/posts", postRouter);
-app.use(userFriendshipRouter);
-app.use(userActionsRouter);
+app.use("/notifications", notificationRouter);
 app.use("/chat", chatRouter);
+app.use("/settings", settingRouter);
+app.use(userFriendshipRouter);
+app.use(userRouter);
 app.use(errorMiddleware);
 WebsocketSetUp(io);
 

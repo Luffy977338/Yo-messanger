@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { FiMoreHorizontal } from "react-icons/fi";
 import st from "./post-options.module.scss";
 import { useQuery } from "@tanstack/react-query";
@@ -18,16 +18,16 @@ const PostOptions = ({
   id,
   picture,
   canDelete,
-  setQueryKey,
+  beforeDelete,
 }: {
   id: string;
   picture?: string;
   canDelete: boolean;
-  setQueryKey?: Dispatch<SetStateAction<any>>;
+  beforeDelete?: Function;
 }) => {
   const [visible, setVisible] = React.useState<boolean>(false);
   const [isHover, setIsHover] = React.useState<boolean>(false);
-  const deleteMutation = useDeletePost({ setQueryKey });
+  const deleteMutation = useDeletePost(beforeDelete);
 
   const { isFetching, data } = useQuery(
     ["post", id],

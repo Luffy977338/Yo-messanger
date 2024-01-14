@@ -1,4 +1,5 @@
 const UserModel = require("../models/user.model.js");
+const SettingsModel = require("../models/settings.model.js");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
 const path = require("path");
@@ -8,6 +9,7 @@ const UserDto = require("../dtos/user.dto.js");
 const UserAuthDto = require("../dtos/user-auth.dto.js");
 const ApiError = require("../exceptions/api-error.js");
 const ERROR = require("../constants/ERROR.js");
+const userService = require("./user.service.js");
 
 const isEmailService =
   !!process.env.SMTP_PASSWORD &&
@@ -36,6 +38,8 @@ class UserAuthService {
     );
     const avatar = path.basename(avatarPath);
 
+    const settings = await SettingsModel.create({});
+
     const user = await UserModel.create({
       avatar,
       username,
@@ -46,7 +50,9 @@ class UserAuthService {
       subscribers: [],
       subscriptions: [],
       description: "",
+      settings,
     });
+
     if (isEmailService) {
       await mailService.sendActiovationLink(
         email,
@@ -73,27 +79,21 @@ class UserAuthService {
   }
 
   async login(email, password) {
-    const user = await UserModel.findOne({ email })
-      .populate("subscribers")
-      .populate("subscriptions")
-      .populate("friends")
-      .populate("posts");
+    const data = await userService.getUserByEmail(email);
 
-    if (!user) {
-      throw ApiError.BadRequest("Неверный логин или пароль");
-    }
+    if (!data) throw ApiError.BadRequest("Неверный логин или пароль");
 
-    const isPasswordEquals = await bcrypt.compare(password, user.password);
+    const { user, userAuth, password: userPassword } = data;
+
+    const isPasswordEquals = await bcrypt.compare(password, userPassword);
     if (!isPasswordEquals) {
       throw ApiError.BadRequest("Неверный логин или пароль");
     }
-    const userDto = new UserDto(user);
-    const userAuthDto = new UserAuthDto(user);
 
-    const tokens = tokenService.generateTokens({ ...userAuthDto });
-    await tokenService.saveToken(userDto._id, tokens.refreshToken);
+    const tokens = tokenService.generateTokens({ ...userAuth });
+    await tokenService.saveToken(user._id, tokens.refreshToken);
 
-    return { ...tokens, user: userDto };
+    return { ...tokens, user };
   }
 
   async logout(refreshToken) {
@@ -110,23 +110,12 @@ class UserAuthService {
     if (!tokenFromDb || !userData) {
       throw ApiError.UnauthorizedError();
     }
-    const user = await UserModel.findById(userData._id)
-      .populate("subscribers")
-      .populate("subscriptions")
-      .populate("friends")
-      .populate("posts");
+    const { user, userAuth } = await userService.getUserById(userData._id);
 
-    if (!user) {
-      throw ApiError.NotFound(ERROR.userNotFound);
-    }
+    const tokens = tokenService.generateTokens({ ...userAuth });
+    await tokenService.saveToken(user._id, tokens.refreshToken);
 
-    const userDto = new UserDto(user);
-    const userAuthDto = new UserAuthDto(user);
-
-    const tokens = tokenService.generateTokens({ ...userAuthDto });
-    await tokenService.saveToken(userDto._id, tokens.refreshToken);
-
-    return { ...tokens, user: userDto };
+    return { ...tokens, user };
   }
 
   async getAllUsers() {

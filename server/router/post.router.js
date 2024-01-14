@@ -4,13 +4,14 @@ const Router = require("express").Router;
 
 const router = new Router();
 
-router.get("/", authMiddleware, postController.getAllPosts);
+router.get("/", postController.getAllPosts);
 router.get("/:postId", authMiddleware, postController.getOnePost);
-router.post("/:userId", authMiddleware, postController.createPost);
-router.delete("/:userId/:postId", authMiddleware, postController.deletePost);
-router.post("/like/:postId/:userId", authMiddleware, postController.likePost);
-router.post(
-  "/removeLike/:postId/:userId",
+router.get("/user/:userId", authMiddleware, postController.getAllUserPosts);
+router.post("/", authMiddleware, postController.createPost);
+router.delete("/:postId", authMiddleware, postController.deletePost);
+router.post("/like/:postId", authMiddleware, postController.likePost);
+router.delete(
+  "/removeLike/:postId",
   authMiddleware,
   postController.removeLikePost,
 );

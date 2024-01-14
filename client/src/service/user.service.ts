@@ -1,17 +1,14 @@
 import { AxiosResponse } from "axios";
 import $api from "../http";
 import user from "../store/user";
+import { IUser } from "../interfaces/user.interface";
 
-export default class UserActionsService {
+export default class UserService {
   static async editProfile(updatedFields: any): Promise<AxiosResponse<any>> {
     return $api.patch(`/edit/${user.user._id}`, updatedFields);
   }
 
-  static async getOneUser(id: string): Promise<AxiosResponse<any>> {
+  static async getUser(id: string): Promise<AxiosResponse<IUser>> {
     return $api.get(`/${id}`);
-  }
-
-  static async makeNotificationViewed(notifId: string) {
-    return $api.post(`/makeNotificationViewed/${notifId}`);
   }
 }

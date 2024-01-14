@@ -1,20 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import user from "../../store/user";
-import $api from "../../http";
 import Loader from "../../components/UI/Loader/Loader";
 import { INotification } from "../../interfaces/notification.interface";
 import Notification from "../../components/UI/Notification/Notification";
 import st from "./all-notifications.module.scss";
 import { observer } from "mobx-react-lite";
+import { useGetNotifications } from "../../hooks/NotificationsHooks";
 
 const AllNotifications = () => {
-  const { isLoading, data } = useQuery(
-    ["notifications", user.user._id],
-    () => {
-      return $api.get(`/${user.user._id}`);
-    },
-    { select: (data) => data.data },
-  );
+  const { isLoading, data } = useGetNotifications();
 
   return (
     <>
@@ -22,11 +14,15 @@ const AllNotifications = () => {
         <Loader />
       ) : data ? (
         <>
-          {!!data.notifications.length && (
+          {data.length ? (
             <div className={st.notifications}>
-              {data.notifications.map((notif: INotification, index: number) => (
+              {data.map((notif: INotification, index: number) => (
                 <Notification key={index} notification={notif} />
               ))}
+            </div>
+          ) : (
+            <div className={st.notifications}>
+              <div style={{ margin: 20 }}>Нет никаких уведомлений</div>
             </div>
           )}
         </>

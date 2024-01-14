@@ -2,10 +2,10 @@ import { useState } from "react";
 import user from "../../../store/user";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import st from "./like-button.module.scss";
-import socket from "../../../store/socket";
 import { IUser } from "../../../interfaces/user.interface";
 import { observer } from "mobx-react-lite";
 import { useLike, useRemoveLike } from "../../../hooks/PostHooks";
+import { useCreateNewNotification } from "../../../hooks/NotificationsHooks";
 
 const LikeButton = ({
   postId,
@@ -22,12 +22,13 @@ const LikeButton = ({
   const [likes, setLikes] = useState<number>(postLikes.length);
   const like = useLike(postId, likes, setLikes, setIsLiked);
   const removeLike = useRemoveLike(postId, likes, setLikes, setIsLiked);
+  const createNotification = useCreateNewNotification();
 
   const handleLike = () => {
-    setLikes(likes + 1);
+    setLikes((prev) => prev + 1);
     setIsLiked(true);
-    if (socket.socket && userCreator._id !== user.user._id) {
-      socket.socket.emit("like", {
+    if (userCreator._id !== user.user._id) {
+      createNotification("like", {
         likedPostId: postId,
         likedUserId: userCreator._id,
         userId: user.user._id,

@@ -13,11 +13,11 @@ const Modal = ({ children, visible, setVisible, style }: ModalProps) => {
     if (visible) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "visible";
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = "visible";
+      document.body.style.overflow = "auto";
     };
   }, [visible]);
 

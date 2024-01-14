@@ -1,19 +1,65 @@
 const ERROR = require("../constants/ERROR");
 const ApiError = require("../exceptions/api-error");
 const postModel = require("../models/post.model");
-const userModel = require("../models/user.model");
+const UserModel = require("../models/user.model");
 const fileService = require("./file.service");
 const path = require("path");
 const notificationService = require("./notification.service");
+const isPictureExtensionOk = require("../constants/acceptedPictureExtensions");
+const userService = require("./user.service");
+const mongoose = require("mongoose");
 
 class PostService {
-  async getAllPosts(page, perPage) {
-    const posts = await postModel
-      .find()
-      .skip(perPage * page)
-      .limit(perPage)
-      .sort({ createdAt: -1 })
-      .populate("userCreator");
+  async getAllPosts(page, perPage, reqUser) {
+    const posts = await postModel.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "userCreator",
+          foreignField: "_id",
+          as: "userCreator",
+        },
+      },
+      {
+        $unwind: "$userCreator",
+      },
+      {
+        $lookup: {
+          from: "settings",
+          localField: "userCreator.settings",
+          foreignField: "_id",
+          as: "userSettings",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userSettings",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { "userSettings.myPage.profileType": { $ne: "close" } }, // не скипать только если тип профиля не close
+            {
+              "userCreator._id": {
+                $eq: new mongoose.Types.ObjectId(reqUser._id),
+              },
+            }, // не скипать если пост того кто запросил
+          ],
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: perPage * page,
+      },
+      {
+        $limit: perPage,
+      },
+    ]);
+
     const totalCount = await postModel.countDocuments();
     const totalPages = Math.ceil(totalCount / perPage);
 
@@ -26,34 +72,60 @@ class PostService {
     };
   }
 
+  async getAllUserPosts(reqUser, userId, page, perPage) {
+    const user = await UserModel.findById(userId)
+      .populate("settings")
+      .populate({
+        path: "posts",
+        populate: {
+          path: "userCreator",
+          populate: [{ path: "settings" }, { path: "friends" }],
+        },
+        options: {
+          skip: perPage * page,
+          limit: perPage,
+          sort: { createdAt: -1 },
+        },
+      });
+
+    const { userDto } = await userService.generateUserDtos(user, reqUser);
+
+    if (!userDto.posts)
+      return {
+        closedProfile: true,
+      };
+
+    const totalCount = userDto.posts.length;
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    return {
+      posts: userDto.posts,
+      pagination: {
+        currentPage: Number(page),
+        totalPages,
+      },
+    };
+  }
+
   async getOnePost(postId) {
-    if (!postId) {
-      throw ApiError.BadRequest("нет Id");
-    }
+    if (!postId) throw ApiError.BadRequest(ERROR.expectedId);
 
     const post = await postModel
       .findById(postId)
       .populate("likes")
-      .populate("userCreator");
+      .populate({ path: "userCreator", populate: [{ path: "settings" }] });
 
-    if (!post) {
-      throw ApiError.NotFound(ERROR.postNotFound);
-    }
+    if (!post) throw ApiError.NotFound(ERROR.postNotFound);
 
     return post;
   }
 
   async createPost(userId, content, files) {
-    let map;
-    files ? (map = new Map(Object.entries(files))) : null;
+    let pictures;
+    files ? (pictures = new Map(Object.entries(files))) : null;
 
-    if (!content && !files) {
-      throw ApiError.BadRequest("Пост не может быть пустым");
-    }
-
-    if (!userId) {
-      throw ApiError.BadRequest(ERROR.userNotFound);
-    }
+    if (!content && !files) throw ApiError.BadRequest(ERROR.postCannotBeEmpty);
+    if (!userId) throw ApiError.BadRequest(ERROR.expectedId);
 
     const updatedFields = {
       userCreator: userId,
@@ -61,20 +133,22 @@ class PostService {
       pictures: [],
     };
 
-    if (map) {
-      if (map.size >= 9) throw ApiError.BadRequest("Слишком много фотографий");
-      for (const picture of map.values()) {
+    if (pictures) {
+      if (pictures.size >= 9) throw ApiError.BadRequest(ERROR.toManyPhotos);
+      for (const picture of pictures.values()) {
         const pictureExtension = path.extname(picture.name);
-        if (pictureExtension !== ".png" && pictureExtension !== ".jpg") {
-          throw ApiError.BadRequest("Формат файла не поддерживается");
+
+        if (!isPictureExtensionOk.includes(pictureExtension)) {
+          throw ApiError.BadRequest(ERROR.extensionNotValid);
         }
+
         const pictureFile = fileService.saveFile(picture);
         updatedFields.pictures.push(pictureFile);
       }
     }
 
     const post = await postModel.create(updatedFields);
-    await userModel.findByIdAndUpdate(
+    const user = await UserModel.findByIdAndUpdate(
       userId,
       {
         $push: {
@@ -86,13 +160,22 @@ class PostService {
       },
       { new: true },
     );
+
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
+
     return post;
   }
 
   async deletePost(userId, postId) {
+    const postCandidate = await postModel.findById(postId);
+
+    if (String(postCandidate.userCreator) !== String(userId))
+      throw ApiError.BadRequest(ERROR.postCannotBeDeletedNotUserCreator);
+
     const post = await postModel.findByIdAndDelete(postId);
-    await notificationService.deleteNotificationByPostId(postId);
-    await userModel.findByIdAndUpdate(
+
+    await notificationService.deleteNotificationsByPostId(postId);
+    await UserModel.findByIdAndUpdate(
       userId,
       {
         $pull: { posts: post._id },
@@ -100,7 +183,7 @@ class PostService {
       { new: true },
     );
 
-    if (!!post.pictures.length) {
+    if (post.pictures.length) {
       for (let picture of post.pictures) {
         fileService.deleteFile(picture);
       }
@@ -110,9 +193,11 @@ class PostService {
   }
 
   async likePost(postId, userId) {
-    if (!postId || !userId) {
-      throw ApiError.BadRequest(ERROR.expectedId);
-    }
+    if (!postId || !userId) throw ApiError.BadRequest(ERROR.expectedId);
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
 
     const post = await postModel
       .findByIdAndUpdate(
@@ -133,9 +218,11 @@ class PostService {
   }
 
   async removeLikePost(postId, userId) {
-    if (!postId || !userId) {
-      throw ApiError.NotFound("Пост или пользователь не найден");
-    }
+    if (!postId || !userId) throw ApiError.NotFound(ERROR.expectedId);
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
 
     const post = await postModel
       .findByIdAndUpdate(
