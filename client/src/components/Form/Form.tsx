@@ -1,6 +1,5 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { API_URL } from "../../http";
 import user from "../../store/user";
 import st from "./form.module.scss";
 import { SlCamera } from "react-icons/sl";
@@ -24,7 +23,6 @@ const Form = ({
     const selectedPicture = event.target.files ? event.target.files[0] : null;
 
     if (selectedPicture) {
-      console.log(selectedPicture.type);
       if (validImageTypes.includes(selectedPicture.type)) {
         return setPictures((prev) => [...prev, selectedPicture]);
       }
@@ -57,7 +55,10 @@ const Form = ({
           <img
             draggable={false}
             className={st.postForm__data_avatar}
-            src={`${API_URL}/${user.user.avatar}`}
+            src={
+              user.user.avatar ||
+              `../../../public/assets/images/default-user-avatar.jpg`
+            }
             alt=''
           />
         </div>

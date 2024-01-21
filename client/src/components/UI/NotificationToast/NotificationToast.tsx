@@ -1,7 +1,6 @@
 import toast, { Toast } from "react-hot-toast";
 import { INotification } from "../../../interfaces/notification.interface";
 import { notificationsMessages } from "../../../constants/notificationMessages";
-import { API_URL } from "../../../http";
 import st from "./notification-toast.module.scss";
 
 const NotificationToast = ({
@@ -20,7 +19,10 @@ const NotificationToast = ({
               className={st.user__avatar}
               width={50}
               height={50}
-              src={`${API_URL}/${notification.user.avatar}`}
+              src={
+                notification.user.avatar ||
+                `../../../public/assets/images/default-user-avatar.jpg`
+              }
               alt='avatar'
             />
             <p className={st.user__username}>{notification.user.username}</p>
@@ -38,7 +40,9 @@ const NotificationToast = ({
             <img
               className={st.post__picture}
               width={100}
-              src={`${API_URL}/${notification.post.pictures[0]}`}
+              src={`${import.meta.env.VITE_REACT_APP_API_URL}/${
+                notification.post.pictures[0]
+              }`}
               alt=''
             />
           ) : (

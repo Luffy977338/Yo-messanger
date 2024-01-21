@@ -1,9 +1,17 @@
 import $api from "../http";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { IAuthResponse } from "../interfaces/auth-response.interface";
 import user from "../store/user";
 
 export default class AuthService {
+  static async googleAuth(googleToken: string | undefined) {
+    try {
+      return $api.post<IAuthResponse>("/auth/google", { googleToken });
+    } catch (e) {
+      throw e;
+    }
+  }
+
   static async login(
     email: string,
     password: string,
@@ -42,7 +50,7 @@ export default class AuthService {
   static async checkAuth() {
     if (!!localStorage.getItem("token")) {
       try {
-        const response = await axios.get<IAuthResponse>(
+        const response = await $api.get<IAuthResponse>(
           `http://localhost:5000/auth/refresh`,
           {
             withCredentials: true,

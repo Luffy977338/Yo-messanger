@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../interfaces/user.interface";
-import { API_URL } from "../../http";
 import React from "react";
 import user from "../../store/user";
 import st from "./send-message-by-banner.module.scss";
@@ -82,7 +81,10 @@ const SendMessageByBanner = ({
       <div className={st.banner__main}>
         <div className={st.banner__main_user}>
           <img
-            src={`${API_URL}/${userCreator?.avatar}`}
+            src={
+              userCreator?.avatar ||
+              `../../../public/assets/images/default-user-avatar.jpg`
+            }
             draggable={false}
             alt=''
           />

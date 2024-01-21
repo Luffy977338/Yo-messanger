@@ -1,7 +1,6 @@
 import { GoDotFill } from "react-icons/go";
 import st from "./post-slider.module.scss";
 import { MdArrowBackIos, MdOutlineArrowForwardIos } from "react-icons/md";
-import { API_URL } from "../../../http";
 import { useState } from "react";
 
 const PostSlider = ({ pictures }: { pictures: string[] | [] }) => {
@@ -37,7 +36,9 @@ const PostSlider = ({ pictures }: { pictures: string[] | [] }) => {
                 {pictures[currentSlide] && (
                   <img
                     draggable={false}
-                    src={`${API_URL}/${pictures[currentSlide]}`}
+                    src={`${import.meta.env.VITE_REACT_APP_API_URL}/${
+                      pictures[currentSlide]
+                    }`}
                     alt=''
                   />
                 )}

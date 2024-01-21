@@ -1,6 +1,5 @@
 import React from "react";
 import st from "./edit-avatar-field.module.scss";
-import { API_URL } from "../../../http";
 import { motion, AnimatePresence } from "framer-motion";
 import user from "../../../store/user";
 import { observer } from "mobx-react-lite";
@@ -26,8 +25,8 @@ const EditAvatarField = ({
             avatar !== null && avatar !== undefined
               ? URL.createObjectURL(avatar)
               : avatar === null
-              ? `${API_URL}/${user.user.avatar}`
-              : `${API_URL}/default-user-avatar.jpg`
+              ? `${user.user.avatar}`
+              : `../../../public/assets/images/default-user-avatar.jpg`
           }
           width={100}
           draggable={false}

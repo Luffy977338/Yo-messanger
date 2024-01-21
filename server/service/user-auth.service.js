@@ -10,6 +10,8 @@ const UserAuthDto = require("../dtos/user-auth.dto.js");
 const ApiError = require("../exceptions/api-error.js");
 const ERROR = require("../constants/ERROR.js");
 const userService = require("./user.service.js");
+const verifyGoogleToken = require("../utils/verifyGoogleToken.js");
+const generateRandomPassword = require("../utils/getRandomPassword.js");
 
 const isEmailService =
   !!process.env.SMTP_PASSWORD &&
@@ -18,6 +20,40 @@ const isEmailService =
   !!process.env.SMTP_HOST;
 
 class UserAuthService {
+  async googleAuth(googleToken) {
+    const googleUser = await verifyGoogleToken(googleToken);
+    const data = await userService.getUserByEmail(googleUser.email);
+
+    if (data) {
+      const { user: candidateEmail, userAuth: candidateEmailAuth } = data;
+      const tokens = tokenService.generateTokens({ ...candidateEmailAuth });
+      await tokenService.saveToken(candidateEmail._id, tokens.refreshToken);
+
+      return { ...tokens, user: candidateEmail };
+    }
+
+    const password = generateRandomPassword(10);
+    const hashPassword = await bcrypt.hash(password, 4);
+
+    const settings = await SettingsModel.create({});
+
+    const user = await UserModel.create({
+      avatar: googleUser.avatar,
+      username: googleUser.username,
+      email: googleUser.email,
+      password: hashPassword,
+      isActivated: true,
+      settings,
+    });
+
+    const { userDto, userAuthDto } = await userService.generateUserDtos(user);
+
+    const tokens = tokenService.generateTokens({ ...userAuthDto });
+    await tokenService.saveToken(userDto._id, tokens.refreshToken);
+
+    return { ...tokens, user: userDto };
+  }
+
   async registration(username, email, password) {
     const candidateEmail = await UserModel.findOne({ email });
     const candidateName = await UserModel.findOne({ username });
@@ -36,7 +72,7 @@ class UserAuthService {
       "images",
       "default-user-avatar.jpg",
     );
-    const avatar = path.basename(avatarPath);
+    const avatar = process.env.API_URL + "/" + path.basename(avatarPath);
 
     const settings = await SettingsModel.create({});
 
@@ -46,10 +82,6 @@ class UserAuthService {
       email,
       password: hashPassword,
       activationLink,
-      friends: [],
-      subscribers: [],
-      subscriptions: [],
-      description: "",
       settings,
     });
 
@@ -86,9 +118,8 @@ class UserAuthService {
     const { user, userAuth, password: userPassword } = data;
 
     const isPasswordEquals = await bcrypt.compare(password, userPassword);
-    if (!isPasswordEquals) {
+    if (!isPasswordEquals)
       throw ApiError.BadRequest("Неверный логин или пароль");
-    }
 
     const tokens = tokenService.generateTokens({ ...userAuth });
     await tokenService.saveToken(user._id, tokens.refreshToken);

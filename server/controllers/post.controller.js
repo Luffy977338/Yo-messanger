@@ -29,7 +29,7 @@ class PostController {
         perPage,
       );
 
-      if (!posts.posts) return res.status(403).json(posts);
+      if (posts.closedProfile) return res.status(403).json(posts);
 
       return res.json(posts);
     } catch (e) {

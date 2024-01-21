@@ -2,6 +2,7 @@ import React from "react";
 import SignIn from "../UI/SignIn/SignIn";
 import SignUp from "../UI/SignUp/SignUp";
 import st from "./login-form.module.scss";
+import GoogleSignIn from "../UI/GoogleSignIn/GoogleSignIn";
 
 const LoginForm = () => {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -41,6 +42,10 @@ const LoginForm = () => {
             Зарегестрироваться
           </button>
         </div>
+        <div className={st.google}>
+          <GoogleSignIn />
+        </div>
+        <hr className={st.line} />
         {isLogin ? <SignIn /> : <SignUp />}
       </div>
     </>

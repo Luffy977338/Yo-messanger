@@ -2,7 +2,6 @@ import st from "./post.module.scss";
 import { IPost } from "../../interfaces/post.interface";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { API_URL } from "../../http";
 import { checkLetterCount } from "../../utils/fontSizeChecker";
 import LikeButton from "../UI/LikeButton/LikeButton";
 import PostOptions from "../PostOptions/PostOptions";
@@ -35,7 +34,10 @@ const Post = ({
           <img
             draggable={false}
             className={st.post__info_avatar}
-            src={`${API_URL}/${userCreator.avatar}`}
+            src={
+              userCreator.avatar ||
+              `../../../public/assets/images/default-user-avatar.jpg`
+            }
             alt=''
           />
           <div>

@@ -1,41 +1,67 @@
 import axios from "axios";
 import { IAuthResponse } from "../interfaces/auth-response.interface";
 
-export const API_URL = `http://localhost:5000`;
-
 const $api = axios.create({
-   withCredentials: true,
-   baseURL: API_URL,
+  withCredentials: true,
+  baseURL: import.meta.env.VITE_REACT_APP_API_URL,
 });
 
 $api.interceptors.request.use((config) => {
-   config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-   return config;
+  config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  return config;
 });
 
+let refreshTokenPromise: Promise<string> | null = null;
+
 $api.interceptors.response.use(
-   (config) => {
-      return config;
-   },
-   async (err) => {
-      const originalRequest = err.config;
-      if (err.response.status == 401 && err.config && !err.config._isRetry) {
-         originalRequest._isRetry = true;
-         try {
-            const response = await axios.get<IAuthResponse>(
-               `${API_URL}/auth/refresh`,
-               {
-                  withCredentials: true,
-               },
-            );
-            localStorage.setItem("token", response.data.accessToken);
-            return $api.request(originalRequest);
-         } catch (e) {
-            console.log(e);
-         }
+  (config) => {
+    return config;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      if (!refreshTokenPromise) {
+        refreshTokenPromise = new Promise<string>((resolve, reject) => {
+          setTimeout(() => {
+            reject(new Error("Token refresh timeout"));
+          }, 5000); // 5 seconds timeout for token refresh
+
+          axios
+            .get<IAuthResponse>(
+              `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh`,
+              {
+                withCredentials: true,
+              },
+            )
+            .then((response) => {
+              localStorage.setItem("token", response.data.accessToken);
+              resolve(response.data.accessToken);
+            })
+            .catch((refreshError) => {
+              reject(refreshError);
+            })
+            .finally(() => {
+              refreshTokenPromise = null;
+            });
+        });
       }
-      throw err;
-   },
+
+      try {
+        const token = await refreshTokenPromise;
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        originalRequest._retry = true;
+        return $api(originalRequest);
+      } catch (refreshError) {
+        // @ts-ignore
+        if (refreshError.response && refreshError.response.status === 401) {
+          window.location.href = "http://localhost:3000/auth";
+          localStorage.removeItem("token");
+        }
+      }
+    }
+    return Promise.reject(error);
+  },
 );
 
 export default $api;

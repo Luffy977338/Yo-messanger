@@ -4,7 +4,6 @@ import AuthService from "../../service/auth.service";
 import st from "./profile-bar.module.scss";
 import { MdExpandMore, MdOutlineLogout } from "react-icons/md";
 import errors from "../../store/errors";
-import { API_URL } from "../../http";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -21,7 +20,7 @@ const ProfileBar = () => {
       errors.makeErrorEmpty();
     },
   });
-  const avatar = `${API_URL}/${user.user.avatar}`;
+  const avatar = user.user.avatar;
   const [isClicked, setIsClicked] = useState(false);
   const profileImgRef = useRef<null | HTMLDivElement>(null);
   const profileRef = useRef<null | HTMLDivElement>(null);
@@ -41,7 +40,9 @@ const ProfileBar = () => {
         <img
           draggable={false}
           className={st.user__avatar_img}
-          src={avatar}
+          src={
+            avatar || `../../../public/assets/images/default-user-avatar.jpg`
+          }
           alt=''
         />
         <MdExpandMore
@@ -66,7 +67,10 @@ const ProfileBar = () => {
               <img
                 draggable={false}
                 className={st.user__img}
-                src={avatar}
+                src={
+                  avatar ||
+                  `../../../public/assets/images/default-user-avatar.jpg`
+                }
                 alt=''
               />
               <div className={st.user__username}>
@@ -88,8 +92,8 @@ const ProfileBar = () => {
             </div>
             <div
               className={st.user__logout}
-              onClick={() => {
-                logoutMutation.mutateAsync();
+              onClick={async () => {
+                await logoutMutation.mutateAsync();
                 setIsClicked(false);
                 path("/auth");
               }}

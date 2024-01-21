@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import $api, { API_URL } from "../../http";
+import $api from "../../http";
 import { IUser } from "../../interfaces/user.interface";
 import st from "./user-friends.module.scss";
 import { observer } from "mobx-react-lite";
@@ -25,7 +25,7 @@ const UserFriends = ({ id }: UserFriendsProps) => {
   return (
     <aside className={st.aside__wrap}>
       <div className={st.myFriends}>
-        {data?.user === user.user.username ? (
+        {data?.username === user.user.username ? (
           <p>Мои друзья</p>
         ) : (
           <p>Друзья {isLoading ? "" : `${data.username}`}</p>
@@ -52,7 +52,10 @@ const UserFriends = ({ id }: UserFriendsProps) => {
                         <img
                           draggable={false}
                           className={st.friend__avatar}
-                          src={`${API_URL}/${sub.avatar}`}
+                          src={
+                            sub.avatar ||
+                            `../../../public/assets/images/default-user-avatar.jpg`
+                          }
                           alt=''
                         />
                         <p className={st.friend__username}>{sub.username}</p>

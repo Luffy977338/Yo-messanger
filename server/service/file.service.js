@@ -20,7 +20,9 @@ class FileService {
     try {
       if (fileName) {
         const filePath = path.resolve("images", fileName);
-        fs.unlinkSync(filePath);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
       }
     } catch (e) {
       throw e;

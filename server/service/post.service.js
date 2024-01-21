@@ -40,12 +40,23 @@ class PostService {
       {
         $match: {
           $or: [
-            { "userSettings.myPage.profileType": { $ne: "close" } }, // не скипать только если тип профиля не close
-            {
-              "userCreator._id": {
-                $eq: new mongoose.Types.ObjectId(reqUser._id),
-              },
-            }, // не скипать если пост того кто запросил
+            { "userSettings.myPage.profileType": { $ne: "close" } },
+            reqUser && reqUser._id
+              ? {
+                  $or: [
+                    {
+                      "userCreator.friends": {
+                        $in: [new mongoose.Types.ObjectId(reqUser._id)],
+                      },
+                    },
+                    {
+                      "userCreator._id": new mongoose.Types.ObjectId(
+                        reqUser._id,
+                      ),
+                    },
+                  ],
+                }
+              : {},
           ],
         },
       },

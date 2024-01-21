@@ -1,5 +1,4 @@
 import { IMessage } from "../../../interfaces/message.interface";
-import { API_URL } from "../../../http";
 import st from "./message.module.scss";
 import user from "../../../store/user";
 import { observer } from "mobx-react-lite";
@@ -21,7 +20,10 @@ const Message = ({ message }: { message: IMessage }) => {
       >
         <img
           className={st.message__creator_avatar}
-          src={`${API_URL}/${message.messageCreator.avatar}`}
+          src={
+            message.messageCreator.avatar ||
+            `../../../public/assets/images/default-user-avatar.jpg`
+          }
           alt=''
         />
         <p className={st.message__creator_username}>

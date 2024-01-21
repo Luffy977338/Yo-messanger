@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./main.scss";
 import "./reset.scss";
 
@@ -17,9 +18,13 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <GoogleOAuthProvider
+        clientId={import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID}
+      >
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

@@ -8,11 +8,12 @@ const UserModel = require("../models/user.model");
 const fileService = require("./file.service");
 const path = require("path");
 const ClosedUserDto = require("../dtos/closed-user.dto");
-const tokenService = require("./token.service");
 
 class UserService {
   async editProfile(id, username, description, avatar, prevAvatar) {
     let updatedFields = {};
+    const prevAvatarSplitted = prevAvatar.split("/");
+    prevAvatar = prevAvatarSplitted[prevAvatarSplitted.length - 1];
 
     if (!username && !description) {
       throw ApiError.BadRequest(ERROR.noInformation);
@@ -33,7 +34,7 @@ class UserService {
       }
 
       const avatarFile = fileService.saveFile(avatar);
-      updatedFields.avatar = avatarFile;
+      updatedFields.avatar = process.env.API_URL + "/" + avatarFile;
 
       if (prevAvatar) {
         fileService.deleteFile(
@@ -51,7 +52,8 @@ class UserService {
         "default-user-avatar.jpg",
       );
 
-      updatedFields.avatar = path.basename(avatarPath);
+      updatedFields.avatar =
+        process.env.API_URL + "/" + path.basename(avatarPath);
     }
 
     const newUser = await UserModel.findByIdAndUpdate(id, updatedFields, {
@@ -149,8 +151,14 @@ class UserService {
         ? await UserModel.findById(reqUserData._id)
         : null;
 
+      const isFriends = user.friends.some((friend) =>
+        friend._id.equals(reqUser._id),
+      );
+
       const userDto =
-        isProfileClosed && String(reqUser._id) !== String(user._id)
+        isProfileClosed &&
+        !isFriends &&
+        String(reqUser._id) !== String(user._id)
           ? new ClosedUserDto(user)
           : new UserDto(user);
 

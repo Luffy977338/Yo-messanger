@@ -3,11 +3,26 @@ const userAuthService = require("../service/user-auth.service");
 const { validationResult } = require("express-validator");
 
 class UserAuthController {
+  async googleAuth(req, res, next) {
+    try {
+      const { googleToken } = req.body;
+      const userData = await userAuthService.googleAuth(googleToken);
+
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async registration(req, res, next) {
     try {
       const validationErrors = validationResult(req);
       const errors = validationErrors.array();
-      console.log(errors);
       if (!validationErrors.isEmpty()) {
         return next(
           ApiError.BadRequest(errors[0].msg || "Введены неккоректные данные"),

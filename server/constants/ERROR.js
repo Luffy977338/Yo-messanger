@@ -14,6 +14,7 @@ const ERROR = {
   noInformation: "Нет информации",
   toManyPhotos: "Слишком много фотографий",
   roomIdMustHaveTwoIds: "roomId должно состоять из 2-ух id",
+  googleVerifyTokenException: "Ошибка googleVerifyToken",
 };
 
 module.exports = ERROR;

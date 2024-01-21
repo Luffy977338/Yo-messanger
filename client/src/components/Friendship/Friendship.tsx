@@ -35,7 +35,6 @@ const Friendship = () => {
     if (data && data.subscribers && !isLoading) {
       return data.subscribers.some((sub: IUser) => sub._id === user.user._id);
     }
-    console.log(data);
     return false;
   };
 

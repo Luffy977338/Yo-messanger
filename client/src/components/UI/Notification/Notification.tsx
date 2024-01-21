@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { notificationsMessages } from "../../../constants/notificationMessages";
-import { API_URL } from "../../../http";
 import { INotification } from "../../../interfaces/notification.interface";
 import st from "./notification.module.scss";
 import { useState } from "react";
@@ -22,7 +21,10 @@ const Notification = ({ notification }: { notification: INotification }) => {
             <img
               className={st.notification__user_avatar}
               draggable={false}
-              src={`${API_URL}/${notification.user.avatar}`}
+              src={
+                notification.user.avatar ||
+                `../../../public/assets/images/default-user-avatar.jpg`
+              }
               alt='avatar'
             />
           </div>
@@ -52,7 +54,9 @@ const Notification = ({ notification }: { notification: INotification }) => {
                 <img
                   className={st.notification__post_picture}
                   width={150}
-                  src={`${API_URL}/${notification.post.pictures[0]}`}
+                  src={`${import.meta.env.VITE_REACT_APP_API_URL}/${
+                    notification.post.pictures[0]
+                  }`}
                   alt=''
                 />
               )}

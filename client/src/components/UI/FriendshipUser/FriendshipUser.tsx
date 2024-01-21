@@ -1,6 +1,5 @@
 import React from "react";
 import st from "./friendship-user.module.scss";
-import { API_URL } from "../../../http";
 import { IUser } from "../../../interfaces/user.interface";
 import { useNavigate } from "react-router-dom";
 import { FiMoreHorizontal } from "react-icons/fi";
@@ -25,7 +24,10 @@ const FriendshipUser = ({ user, type }: UserProps) => {
         <img
           draggable={false}
           className={st.user__avatar}
-          src={`${API_URL}/${user.avatar}`}
+          src={
+            user.avatar ||
+            `../../../public/assets/images/default-user-avatar.jpg`
+          }
           alt=''
         />
         <p

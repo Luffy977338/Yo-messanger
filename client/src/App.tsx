@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import routes from "./routes";
 import { IRoute } from "./interfaces/route.interface";
 import Header from "./components/Header/Header";
@@ -14,7 +14,6 @@ import socket from "./store/socket";
 import user from "./store/user";
 
 const App = () => {
-  const path = useNavigate();
   const location = useLocation();
   React.useEffect(() => {
     const newSocket = io("http://localhost:5000");
@@ -24,13 +23,6 @@ const App = () => {
       newSocket.disconnect();
     };
   }, [user.user._id]);
-
-  React.useEffect(() => {
-    if (!!localStorage.getItem("token")) {
-      return path("/posts");
-    }
-    return path("/auth");
-  }, []);
 
   React.useEffect(() => {
     socket.socket.emit("setUserId", user.user._id);

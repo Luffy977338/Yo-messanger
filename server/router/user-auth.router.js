@@ -4,6 +4,7 @@ const { body } = require("express-validator");
 const authMiddleware = require("../middlewares/auth.middleware.js");
 const router = new Router();
 
+router.post("/google", userAuthController.googleAuth);
 router.post(
   "/registration",
   body("username", "Длина ника должна составлять от 4 до 15 символов").isLength(

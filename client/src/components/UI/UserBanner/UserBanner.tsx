@@ -1,5 +1,4 @@
 import st from "./user-banner.module.scss";
-import { API_URL } from "../../../http";
 import Friendship from "../../Friendship/Friendship";
 import user from "../../../store/user";
 import { observer } from "mobx-react-lite";
@@ -36,8 +35,11 @@ const UserBanner = () => {
         className={st.banner__avatar}
         src={
           isLoading
-            ? `${API_URL}/default-user-avatar.jpg`
-            : `${API_URL}/${data?.avatar}`
+            ? `../../../public/assets/images/default-user-avatar.jpg`
+            : `${
+                data?.avatar ||
+                `../../../public/assets/images/default-user-avatar.jpg`
+              }`
         }
         alt=''
       />

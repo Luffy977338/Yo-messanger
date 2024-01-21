@@ -1,4 +1,3 @@
-import { API_URL } from "../../../http";
 import { IMessage } from "../../../interfaces/message.interface";
 import { IUser } from "../../../interfaces/user.interface";
 import user from "../../../store/user";
@@ -17,7 +16,10 @@ const ChatUser = ({
       <div>
         <img
           className={st.chatUser__img}
-          src={`${API_URL}/${chatUser.avatar}`}
+          src={
+            chatUser.avatar ||
+            `../../../public/assets/images/default-user-avatar.jpg`
+          }
           alt=''
         />
       </div>

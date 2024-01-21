@@ -18,7 +18,6 @@ const SignUp = () => {
       onSuccess: (data) => {
         path("/posts");
         localStorage.setItem("token", data.data.accessToken);
-        // console.log(data.data.user);
         user.setUser(data.data.user);
       },
     },
