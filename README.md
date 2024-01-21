@@ -39,9 +39,11 @@ SMTP_USER=**your gmail**
 SMTP_PASSWORD=**disposable gmail password like eoisetvwjxgxkfgs**
 API_URL=http://localhost:5000
 CLIENT_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=**hereYourClientIdFromGoogle**.apps.googleusercontent.com
 ```
 
 you don't have to write SMTP parameters if you want, then emails won't arrive
+if you don't add GOOGLE_CLIENT_ID sign in with google won't work
 
 to start client side
 

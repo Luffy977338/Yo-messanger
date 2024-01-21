@@ -12,8 +12,6 @@ const ClosedUserDto = require("../dtos/closed-user.dto");
 class UserService {
   async editProfile(id, username, description, avatar, prevAvatar) {
     let updatedFields = {};
-    const prevAvatarSplitted = prevAvatar.split("/");
-    prevAvatar = prevAvatarSplitted[prevAvatarSplitted.length - 1];
 
     if (!username && !description) {
       throw ApiError.BadRequest(ERROR.noInformation);
@@ -37,11 +35,15 @@ class UserService {
       updatedFields.avatar = process.env.API_URL + "/" + avatarFile;
 
       if (prevAvatar) {
+        const prevAvatarSplitted = prevAvatar.split("/");
+        prevAvatar = prevAvatarSplitted[prevAvatarSplitted.length - 1];
         fileService.deleteFile(
           prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
         );
       }
     } else if (prevAvatar) {
+      const prevAvatarSplitted = prevAvatar.split("/");
+      prevAvatar = prevAvatarSplitted[prevAvatarSplitted.length - 1];
       fileService.deleteFile(
         prevAvatar === "default-user-avatar.jpg" ? null : prevAvatar,
       );
