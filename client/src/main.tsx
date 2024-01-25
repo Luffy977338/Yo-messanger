@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./main.scss";
 import "./reset.scss";
+import AxiosNavigation from "./http/AxiosNavigation.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +19,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
+      <AxiosNavigation />
       <GoogleOAuthProvider
         clientId={import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID}
       >

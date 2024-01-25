@@ -24,7 +24,7 @@ const SignIn = () => {
     e.preventDefault();
 
     return toast.promise(loginMutation.mutateAsync(), {
-      loading: "Проверка данных",
+      loading: "Проверка данных...",
       success: "С возвращением",
       error: (data) => `${data.response.data.message}` || "Что-то пошло не так",
     });

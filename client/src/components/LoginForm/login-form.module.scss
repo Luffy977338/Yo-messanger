@@ -12,6 +12,16 @@
     width: 60%;
     margin: 30px 0;
     border: 1px solid var(--primary-color);
+    position: relative;
+
+    &__before {
+      width: 100%;
+      transform: translate(-1px, -1px);
+      border: 1px solid rgb(0, 149, 255);
+      display: block;
+      position: absolute;
+      transition: all 0.3s;
+    }
   }
 
   .auth__types {

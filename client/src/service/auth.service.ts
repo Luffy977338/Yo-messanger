@@ -27,13 +27,16 @@ export default class AuthService {
     username: string,
     email: string,
     password: string,
-  ): Promise<AxiosResponse<IAuthResponse>> {
+  ): Promise<AxiosResponse<IAuthResponse | { activate: boolean }>> {
     try {
-      return $api.post<IAuthResponse>("/auth/registration", {
-        username,
-        email,
-        password,
-      });
+      return $api.post<IAuthResponse | { activate: boolean }>(
+        "/auth/registration",
+        {
+          username,
+          email,
+          password,
+        },
+      );
     } catch (e) {
       throw e;
     }

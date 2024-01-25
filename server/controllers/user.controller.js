@@ -3,6 +3,7 @@ const ApiError = require("../exceptions/api-error");
 const notificationService = require("../service/notification.service");
 const userService = require("../service/user.service");
 const tokenService = require("../service/token.service");
+const ERROR = require("../constants/ERROR");
 
 class UserController {
   async editProfile(req, res, next) {

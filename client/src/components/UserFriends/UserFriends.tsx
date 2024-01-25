@@ -25,7 +25,7 @@ const UserFriends = ({ id }: UserFriendsProps) => {
   return (
     <aside className={st.aside__wrap}>
       <div className={st.myFriends}>
-        {data?.username === user.user.username ? (
+        {data?._id === user.user._id ? (
           <p>Мои друзья</p>
         ) : (
           <p>Друзья {isLoading ? "" : `${data.username}`}</p>

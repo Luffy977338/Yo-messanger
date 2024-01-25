@@ -19,6 +19,12 @@ module.exports = function (req, res, next) {
     if (!userData) {
       return next(ApiError.UnauthorizedError("Access токен не валиден"));
     }
+    if (!userData.isActivated) {
+      res.clearCookie("refreshToken");
+      return next(ApiError.UnauthorizedError("MailNotActivate"));
+    }
+
+    console.log("done");
 
     req.user = userData;
     next();

@@ -8,20 +8,22 @@ const tokenService = require("./token.service.js");
 const UserDto = require("../dtos/user.dto.js");
 const UserAuthDto = require("../dtos/user-auth.dto.js");
 const ApiError = require("../exceptions/api-error.js");
-const ERROR = require("../constants/ERROR.js");
 const userService = require("./user.service.js");
 const verifyGoogleToken = require("../utils/verifyGoogleToken.js");
 const generateRandomPassword = require("../utils/getRandomPassword.js");
-
-const isEmailService =
-  !!process.env.SMTP_PASSWORD &&
-  !!process.env.SMTP_USER &&
-  !!process.env.SMTP_PORT &&
-  !!process.env.SMTP_HOST;
+const userModel = require("../models/user.model.js");
 
 class UserAuthService {
   async googleAuth(googleToken) {
     const googleUser = await verifyGoogleToken(googleToken);
+    const candidateUser = await userModel.findOne({ email: googleUser.email });
+    if (!candidateUser.isActivated) {
+      await userModel.findOneAndUpdate(
+        { email: googleUser.email },
+        { isActivated: true, password: generateRandomPassword(10) },
+        { new: true },
+      );
+    }
     const data = await userService.getUserByEmail(googleUser.email);
 
     if (data) {
@@ -55,13 +57,22 @@ class UserAuthService {
   }
 
   async registration(username, email, password) {
-    const candidateEmail = await UserModel.findOne({ email });
-    const candidateName = await UserModel.findOne({ username });
-    if (candidateName) {
-      throw ApiError.BadRequest("Пользователь с таким ником уже есть");
-    }
-    if (candidateEmail) {
-      throw ApiError.BadRequest("Пользователь с такой почтой уже есть");
+    const candidateUser = await UserModel.findOne({ email });
+    if (candidateUser) {
+      if (candidateUser.isActivated) {
+        throw ApiError.BadRequest("Пользователь с такой почтой уже существует");
+      } else {
+        const newActivationLink = uuid.v4();
+        candidateUser.activationLink = newActivationLink;
+        await candidateUser.save();
+
+        await mailService.sendActivationLink({
+          to: email,
+          link: `${process.env.API_URL}/auth/activate/${newActivationLink}`,
+        });
+
+        return { activate: true };
+      }
     }
 
     const hashPassword = await bcrypt.hash(password, 4);
@@ -83,14 +94,13 @@ class UserAuthService {
       password: hashPassword,
       activationLink,
       settings,
+      isActivated: false,
     });
 
-    if (isEmailService) {
-      await mailService.sendActiovationLink(
-        email,
-        `${process.env.API_URL}/auth/activate/${activationLink}`,
-      );
-    }
+    await mailService.sendActivationLink({
+      to: email,
+      link: `${process.env.API_URL}/auth/activate/${activationLink}`,
+    });
 
     const userDto = new UserDto(user);
     const userAuthDto = new UserAuthDto(user);
@@ -116,6 +126,8 @@ class UserAuthService {
     if (!data) throw ApiError.BadRequest("Неверный логин или пароль");
 
     const { user, userAuth, password: userPassword } = data;
+
+    if (!user) throw ApiError.NotFound("Пользователь не найден");
 
     const isPasswordEquals = await bcrypt.compare(password, userPassword);
     if (!isPasswordEquals)

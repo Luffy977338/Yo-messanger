@@ -76,7 +76,7 @@ class UserAuthController {
     try {
       const activationLink = req.params.link;
       await userAuthService.activate(activationLink);
-      return res.redirect(process.env.CLIENT_URL);
+      return res.redirect(process.env.CLIENT_URL + "/posts");
     } catch (e) {
       next(e);
     }

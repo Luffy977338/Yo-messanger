@@ -7,7 +7,6 @@ const GoogleSignIn = () => {
   return (
     <GoogleLogin
       onSuccess={async (response) => {
-        console.log(response);
         return await googleAuth.mutateAsync(response.credential);
       }}
       onError={() => console.log("error")}

@@ -1,35 +1,53 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import AuthService from "../../../service/auth.service";
 import user from "../../../store/user";
 import LoginInput from "../LoginInput/LoginInput";
 import st from "./sign-up.module.scss";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const SignUp = () => {
+const SignUp = ({
+  setStep,
+  setTotalSteps,
+}: {
+  setStep: Dispatch<SetStateAction<number>>;
+  setTotalSteps: Dispatch<SetStateAction<number>>;
+}) => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const path = useNavigate();
   const registrationMutation = useMutation(
     () => AuthService.registration(username, email, password),
     {
       onSuccess: (data) => {
-        path("/posts");
+        if ("activate" in data.data) {
+          setStep(1);
+          return;
+        }
+        setStep(1);
         localStorage.setItem("token", data.data.accessToken);
         user.setUser(data.data.user);
       },
     },
   );
 
-  const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    setTotalSteps(1);
+    setStep(0);
+  }, []);
+
+  const handleForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    return toast.promise(registrationMutation.mutateAsync(), {
-      loading: "Проверка данных",
-      success: "Добро пожаловать",
+    return await toast.promise(registrationMutation.mutateAsync(), {
+      success: (data) => {
+        if ("activate" in data.data) {
+          return "Письмо с подтверждением отправленно";
+        }
+        return "Добро пожаловать";
+      },
       error: (data) => `${data.response.data.message}` || "Что-то пошло не так",
+      loading: "Смотрим данные",
     });
   };
 
