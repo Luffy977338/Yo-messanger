@@ -24,8 +24,6 @@ module.exports = function (req, res, next) {
       return next(ApiError.UnauthorizedError("MailNotActivate"));
     }
 
-    console.log("done");
-
     req.user = userData;
     next();
   } catch (e) {

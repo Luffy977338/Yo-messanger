@@ -1,0 +1,21 @@
+.button {
+  font-size: 20px;
+  font-family: "Arial", sans-serif;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 15px;
+  text-decoration: none;
+  background: rgb(174, 20, 205);
+  color: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover {
+    background: rgb(143, 16, 168);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

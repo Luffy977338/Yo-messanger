@@ -12,22 +12,29 @@ const userService = require("./user.service.js");
 const verifyGoogleToken = require("../utils/verifyGoogleToken.js");
 const generateRandomPassword = require("../utils/getRandomPassword.js");
 const userModel = require("../models/user.model.js");
+const ERROR = require("../constants/ERROR.js");
 
 class UserAuthService {
   async googleAuth(googleToken) {
     const googleUser = await verifyGoogleToken(googleToken);
-    const candidateUser = await userModel.findOne({ email: googleUser.email });
-    if (!candidateUser.isActivated) {
-      await userModel.findOneAndUpdate(
-        { email: googleUser.email },
-        { isActivated: true, password: generateRandomPassword(10) },
-        { new: true },
-      );
-    }
-    const data = await userService.getUserByEmail(googleUser.email);
+    const candidateUser = await userService.getUserByEmail(googleUser.email);
+    if (candidateUser) {
+      const { user: candidateEmail, userAuth: candidateEmailAuth } =
+        candidateUser;
 
-    if (data) {
-      const { user: candidateEmail, userAuth: candidateEmailAuth } = data;
+      if (!candidateEmail.isActivated) {
+        console.log("update");
+        await userModel.findOneAndUpdate(
+          { email: googleUser.email },
+          {
+            isActivated: true,
+            password: generateRandomPassword(10),
+            avatar: googleUser.avatar,
+          },
+          { new: true },
+        );
+      }
+
       const tokens = tokenService.generateTokens({ ...candidateEmailAuth });
       await tokenService.saveToken(candidateEmail._id, tokens.refreshToken);
 
@@ -64,6 +71,7 @@ class UserAuthService {
       } else {
         const newActivationLink = uuid.v4();
         candidateUser.activationLink = newActivationLink;
+        candidateUser.password = await bcrypt.hash(password, 4);
         await candidateUser.save();
 
         await mailService.sendActivationLink({
@@ -71,7 +79,13 @@ class UserAuthService {
           link: `${process.env.API_URL}/auth/activate/${newActivationLink}`,
         });
 
-        return { activate: true };
+        const candidateUserDto = new UserDto(candidateUser);
+        const candidateUserAuthDto = new UserAuthDto(candidateUser);
+
+        const tokens = tokenService.generateTokens({ ...candidateUserAuthDto });
+        await tokenService.saveToken(candidateUserDto._id, tokens.refreshToken);
+
+        return { ...tokens, user: candidateUserDto };
       }
     }
 
@@ -128,6 +142,8 @@ class UserAuthService {
     const { user, userAuth, password: userPassword } = data;
 
     if (!user) throw ApiError.NotFound("Пользователь не найден");
+
+    if (!user.isActivated) throw ApiError.BadRequest(ERROR.MailNotActivated);
 
     const isPasswordEquals = await bcrypt.compare(password, userPassword);
     if (!isPasswordEquals)

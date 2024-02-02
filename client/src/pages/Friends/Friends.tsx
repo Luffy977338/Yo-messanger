@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import st from "./friends.module.scss";
 import FriendshipUser from "../../components/UI/FriendshipUser/FriendshipUser";
 import { observer } from "mobx-react-lite";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import $api from "../../http";
 import Loader from "../../components/UI/Loader/Loader";
@@ -10,9 +10,29 @@ import { IUser } from "../../interfaces/user.interface";
 
 const Friends = () => {
   const { id } = useParams();
+  const path = useNavigate();
+  const location = useLocation();
   const [type, setType] = React.useState<
     "friends" | "subscribers" | "subscriptions"
   >("friends");
+
+  useEffect(() => {
+    const locationType = location.pathname.split("/")[1];
+
+    switch (locationType) {
+      case "friends":
+        setType("friends");
+        break;
+      case "subscribers":
+        setType("subscribers");
+        break;
+      case "subscriptions":
+        setType("subscriptions");
+        break;
+      default:
+        null;
+    }
+  }, [location.pathname]);
 
   const { isFetching, data } = useQuery(
     ["friends", id],
@@ -32,9 +52,9 @@ const Friends = () => {
             type === "subscriptions" ? st.panel__background_subscriptions : ""
           }`}
         />
-        <div onClick={() => setType("friends")}>Друзья</div>
-        <div onClick={() => setType("subscribers")}>Подписчики</div>
-        <div onClick={() => setType("subscriptions")}>Подписки</div>
+        <div onClick={() => path(`/friends/${id}`)}>Друзья</div>
+        <div onClick={() => path(`/subscribers/${id}`)}>Подписчики</div>
+        <div onClick={() => path(`/subscriptions/${id}`)}>Подписки</div>
       </nav>
       <hr />
       <div>

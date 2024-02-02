@@ -23,6 +23,7 @@ class NotificationService {
   async newNotification(postId, toUserId, userId, type) {
     const user = await UserModel.findById(userId);
     const post = await postModel.findById(postId);
+
     if (!user) throw ApiError.NotFound(ERROR.userNotFound);
     if (!post) throw ApiError.NotFound(ERROR.postNotFound);
 
@@ -56,7 +57,7 @@ class NotificationService {
 
     return (await notification.populate("user post")).populate({
       path: "post",
-      populate: "userCreator",
+      populate: "userCreator comments",
     });
   }
 

@@ -15,6 +15,8 @@ const routes: IRoute[] = [
     component: UserPosts,
   },
   { path: "/friends/:id", component: Friends },
+  { path: "/subscriptions/:id", component: Friends },
+  { path: "/subscribers/:id", component: Friends },
   { path: "/edit", component: EditProfile },
   { path: "/auth", component: Authorization },
   { path: "/messages", component: Messages },

@@ -34,13 +34,13 @@ export function useAxiosNavigation() {
           setRetry(false);
           navRef.current("/auth");
           localStorage.removeItem("token");
-          toast.error("Почта не подтверждена", { duration: 6500 });
+          toast.error("Почта не подтвержденна", { duration: 6500 });
         } else if (error.response.status === 401 && !retry) {
           if (!refreshTokenPromise) {
             refreshTokenPromise = new Promise<string>((resolve, reject) => {
               setTimeout(() => {
                 reject(new Error("Token refresh timeout"));
-              }, 5000); // 5 seconds timeout for token refresh
+              }, 10000); // 5 seconds timeout for token refresh
 
               axios
                 .get<IAuthResponse>(

@@ -53,12 +53,7 @@ export default class AuthService {
   static async checkAuth() {
     if (!!localStorage.getItem("token")) {
       try {
-        const response = await $api.get<IAuthResponse>(
-          `http://localhost:5000/auth/refresh`,
-          {
-            withCredentials: true,
-          },
-        );
+        const response = await $api.get<IAuthResponse>(`/auth/refresh`);
         localStorage.setItem("token", response.data.accessToken);
         user.setUser(response.data.user);
         return response.data.user;

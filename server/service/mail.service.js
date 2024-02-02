@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const getMailProvider = require("../utils/getMailProvider");
+const ApiError = require("../exceptions/api-error");
 
 const isGoogleMail =
   !!process.env.SMTP_GOOGLE_PASSWORD &&
@@ -39,29 +40,41 @@ class MailService {
   }
 
   async sendActivationLinkToGmail({ to, link }) {
-    return await this.gmailTransporter.sendMail({
-      from: process.env.SMTP_GOOGLE_USER,
-      to,
-      subject: "Подтверждение аккаунта " + process.env.API_URL,
-      text: "",
-      html: `<div>
-               <h1>Нажмите на кнопку для активации</h1>
-               <a href='${link}'>Подтвердить</a>
-            </div>`,
-    });
+    try {
+      isGoogleMail
+        ? await this.gmailTransporter.sendMail({
+            from: process.env.SMTP_GOOGLE_USER,
+            to,
+            subject: "Подтверждение аккаунта Yo!",
+            text: "",
+            html: `<div>
+                 <h1>Нажмите на кнопку для активации</h1>
+                 <a href='${link}'>Подтвердить</a>
+              </div>`,
+          })
+        : ApiError.ModuleOutOfWork();
+    } catch (e) {
+      throw e;
+    }
   }
 
   async sendActivationLinkToYandex({ to, link }) {
-    return await this.yandexTransporter.sendMail({
-      from: process.env.SMTP_YANDEX_USER,
-      to,
-      subject: "Подтверждение аккаунта " + process.env.API_URL,
-      text: "",
-      html: `<div>
-               <h1>Нажмите на кнопку для активации</h1>
-               <a href='${link}'>Подтвердить</a>
-            </div>`,
-    });
+    try {
+      isYandexMail
+        ? await this.yandexTransporter.sendMail({
+            from: process.env.SMTP_YANDEX_USER,
+            to,
+            subject: "Подтверждение аккаунта Yo!",
+            text: "",
+            html: `<div>
+                 <h1>Нажмите на кнопку для активации</h1>
+                 <a href='${link}'>Подтвердить</a>
+              </div>`,
+          })
+        : ApiError.ModuleOutOfWork();
+    } catch (e) {
+      throw e;
+    }
   }
 
   async sendActivationLink({ to, link }) {

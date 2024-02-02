@@ -23,4 +23,8 @@ module.exports = class ApiError extends Error {
   static NotActivated() {
     return new ApiError(403, "Почта не подтверждена");
   }
+
+  static ModuleOutOfWork(message = "Модуль не работает", errors = []) {
+    return new ApiError(500, message, errors);
+  }
 };

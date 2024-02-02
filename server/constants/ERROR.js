@@ -1,7 +1,9 @@
 const ERROR = {
   userNotFound: "Такого пользователя не существует",
+  requiredField: "Поле обязательно",
   notificationNotFound: "Такого уведомления не существует",
   notificationAlreadyExist: "Такое уведомление уже есть",
+  MailNotActivated: "Почта не подтвержденна",
   postCannotBeDeletedNotUserCreator:
     "Пост не можеть быть удален не его создателем",
   postNotFound: "Такого поста не существует",

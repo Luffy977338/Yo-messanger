@@ -1,15 +1,15 @@
 const debounce = <F extends (...args: any[]) => void>(
-   func: F,
-   delay: number,
+  func: F,
+  delay: number = 300,
 ) => {
-   let timeout: ReturnType<typeof setTimeout>;
+  let timeout: ReturnType<typeof setTimeout>;
 
-   return function (this: any, ...args: Parameters<F>) {
-      const context = this;
+  return function (this: any, ...args: Parameters<F>) {
+    const context = this;
 
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), delay);
-   };
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
 };
 
 export default debounce;
