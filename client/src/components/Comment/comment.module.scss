@@ -1,0 +1,65 @@
+.comment {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  &:hover {
+    .comment__delete {
+      &_button {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__main {
+    display: flex;
+    word-wrap: break-word;
+    overflow: hidden;
+  }
+
+  &__delete {
+    display: flex;
+    align-items: flex-start;
+
+    &_button {
+      border: none;
+      transition: 0.1s all;
+      opacity: 0;
+      background: none;
+      color: grey;
+      cursor: pointer;
+      font-size: 18px;
+
+      &:hover {
+        color: rgb(154, 154, 154);
+      }
+    }
+  }
+
+  &__content {
+    overflow: hidden;
+
+    &_username {
+      font-size: 20px;
+      margin-bottom: 10px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &_message {
+      font-size: 16px;
+      margin-left: 5px;
+    }
+  }
+
+  &__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}

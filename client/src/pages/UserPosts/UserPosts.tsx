@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import React, { Fragment } from "react";
 import LoadPost from "../../components/UI/LoadPost/LoadPost";
 import Post from "../../components/Post/Post";
-import UserBanner from "../../components/UI/UserBanner/UserBanner";
+import UserBanner from "../../components/UserBanner/UserBanner";
 import UserFriends from "../../components/UserFriends/UserFriends";
 import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
 import st from "./user-posts.module.scss";
@@ -31,6 +31,7 @@ const UserPosts = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isFetching,
     error: dataError,
   } = useGetUserPosts(queryKey, id);
   const error = dataError as profileClosedError | null;
@@ -38,7 +39,7 @@ const UserPosts = () => {
   useInfiniteQueryScrolling(
     document,
     () => {
-      if (!isFetchingNextPage && hasNextPage) {
+      if (!isFetchingNextPage && hasNextPage && isFetching) {
         fetchNextPage();
       }
     },

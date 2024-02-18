@@ -4,6 +4,7 @@ import $api from "./index";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { IAuthResponse } from "../interfaces/auth-response.interface";
+import { v4 as uuidv4 } from "uuid";
 
 let refreshTokenPromise: Promise<string> | null = null;
 
@@ -11,6 +12,11 @@ export function useAxiosNavigation() {
   const navRef = useRef(useNavigate());
   const [retryCount, setRetryCount] = useState(0);
   const [retry, setRetry] = useState(false);
+
+  const resetRetries = () => {
+    setRetryCount(0);
+    setRetry(false);
+  };
 
   useEffect(() => {
     setRetry(false);
@@ -30,12 +36,15 @@ export function useAxiosNavigation() {
           error.response.data.message === "MailNotActivate" &&
           retryCount < 1
         ) {
-          setRetryCount(0);
-          setRetry(false);
+          resetRetries();
           navRef.current("/auth");
           localStorage.removeItem("token");
           toast.error("Почта не подтвержденна", { duration: 6500 });
-        } else if (error.response.status === 401 && !retry) {
+        } else if (error.response.status >= 500) {
+          resetRetries();
+          const errorId = uuidv4();
+          navRef.current(`/notFound/${errorId}`);
+        } else if (error.response.status == 401 && !retry) {
           if (!refreshTokenPromise) {
             refreshTokenPromise = new Promise<string>((resolve, reject) => {
               setTimeout(() => {
@@ -75,8 +84,7 @@ export function useAxiosNavigation() {
               // @ts-ignore
               refreshError.response.status === 401
             ) {
-              setRetryCount(0);
-              setRetry(false);
+              resetRetries();
               navRef.current("/auth");
               localStorage.removeItem("token");
             }

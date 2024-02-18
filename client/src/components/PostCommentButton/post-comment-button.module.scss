@@ -1,0 +1,20 @@
+.commentButton {
+  background: var(--primary-color);
+  display: inline-flex;
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  user-select: none;
+  padding: 6px 18px;
+  border-radius: 30px;
+  margin-top: 20px;
+  font-size: 22px;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-left: 7px;
+
+  span {
+    font-size: 18px;
+    font-family: "Arial" sans-serif;
+  }
+}

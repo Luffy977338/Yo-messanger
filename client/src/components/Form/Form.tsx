@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import user from "../../store/user";
 import st from "./form.module.scss";
@@ -30,7 +30,7 @@ const Form = ({
     }
   };
 
-  const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -41,12 +41,23 @@ const Form = ({
       });
     }
 
-    toast.promise(createPost.mutateAsync(formData), {
-      loading: "Проверка поста",
-      success: "Пост опубликован",
-      error: (data) => `${data.response.data.message || "Что-то пошло не так"}`,
-    });
+    await createPost.mutateAsync(formData);
   };
+
+  useEffect(() => {
+    let toastId;
+    if (createPost.isLoading) {
+      toastId = toast.loading("Выгружаем...");
+    }
+
+    if (!createPost.isLoading) {
+      toast.dismiss(toastId);
+    }
+
+    if (createPost.isSuccess) {
+      toast.success("Пост опубликован");
+    }
+  }, [createPost.isLoading]);
 
   return (
     <form className={st.postForm} onSubmit={handleForm}>

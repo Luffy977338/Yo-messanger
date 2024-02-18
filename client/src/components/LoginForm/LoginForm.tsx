@@ -1,8 +1,8 @@
 import { useState } from "react";
-import SignIn from "../UI/SignIn/SignIn";
-import SignUp from "../UI/SignUp/SignUp";
+import SignIn from "../SignIn/SignIn";
+import SignUp from "../SignUp/SignUp";
 import st from "./login-form.module.scss";
-import GoogleSignIn from "../UI/GoogleSignIn/GoogleSignIn";
+import GoogleSignIn from "../GoogleSignIn/GoogleSignIn";
 import ProoveMail from "../ProoveMail/ProoveMail";
 
 const LoginForm = () => {

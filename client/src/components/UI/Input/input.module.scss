@@ -1,0 +1,30 @@
+.input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--primary-color);
+  padding: 5px 10px;
+  border-radius: 10px;
+  width: 100%;
+  justify-content: space-between;
+
+  &__message {
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+    color: var(--secondary-color);
+    padding-right: 10px;
+    width: 100%;
+  }
+
+  .label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: grey;
+  }
+
+  &__picture {
+    display: none;
+  }
+}

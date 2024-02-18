@@ -7,13 +7,15 @@ import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { useQuery } from "@tanstack/react-query";
 import AuthService from "./service/auth.service";
-import Loader from "./components/UI/Loader/Loader";
 import { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
 import socket from "./store/socket";
 import user from "./store/user";
+import CirclesLoader from "./components/UI/CirclesLoader/CirclesLoader";
+import { useChangeLocation } from "./hooks/useChangeLocation";
 
 const App = () => {
+  const invalidLocations = ["/auth"];
   const location = useLocation();
   React.useEffect(() => {
     const newSocket = io("http://localhost:5000");
@@ -24,13 +26,11 @@ const App = () => {
     };
   }, [user.user._id]);
 
+  useChangeLocation(() => window.scrollTo({ top: 0 }));
+
   React.useEffect(() => {
     socket.socket.emit("setUserId", user.user._id);
   }, [user.user._id]);
-
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [location]);
 
   const { isFetching } = useQuery(["checkAuth"], AuthService.checkAuth, {
     retry: 1,
@@ -39,7 +39,7 @@ const App = () => {
   if (isFetching) {
     return (
       <div style={{ display: "grid", placeItems: "center", height: "100vh" }}>
-        <Loader />
+        <CirclesLoader />
       </div>
     );
   }
@@ -56,9 +56,9 @@ const App = () => {
           },
         }}
       />
-      {location.pathname === "/auth" ? "" : <Header />}
+      {invalidLocations.includes(location.pathname) ? "" : <Header />}
       <main>
-        {location.pathname === "/auth" ? "" : <Sidebar />}
+        {invalidLocations.includes(location.pathname) ? "" : <Sidebar />}
         <article>
           <Routes>
             {routes.map((route: IRoute) => (

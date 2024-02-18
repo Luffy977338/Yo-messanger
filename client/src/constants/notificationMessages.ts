@@ -1,5 +1,9 @@
-export const notificationsMessages = {
+export const notificationsMessages: {
+  like: string;
+  comment: string;
+  friendReq: string;
+} = {
   like: "поставил-(а) лайк вашему посту",
   comment: "прокомментировал-(а) ваш пост",
-  subscribe: "подал-(а) заявку в друзья",
+  friendReq: "подал-(а) заявку в друзья",
 };

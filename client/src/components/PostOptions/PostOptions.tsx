@@ -5,14 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import { IoTrashOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
-import Modal from "../UI/Modal/Modal";
-import Loader from "../UI/Loader/Loader";
+import Modal from "../Modal/Modal";
 import { IUser } from "../../interfaces/user.interface";
 import $api from "../../http";
 import LikeUser from "../UI/LikeUser/LikeUser";
 import toast from "react-hot-toast";
 import { useDeletePost } from "../../hooks/PostHooks";
 import { MMenuPopUpAnimation } from "../../animations/PopUp.animation";
+import CirclesLoader from "../UI/CirclesLoader/CirclesLoader";
 
 const PostOptions = ({
   id,
@@ -50,67 +50,69 @@ const PostOptions = ({
       >
         <FiMoreHorizontal />
       </div>
-      <AnimatePresence mode='wait'>
-        {isHover ? (
-          <motion.div
-            initial='from'
-            animate='to'
-            exit='from'
-            variants={MMenuPopUpAnimation}
-            className={st.mutations}
-            onMouseEnter={() => setIsHover(true)}
-            onMouseLeave={() => setIsHover(false)}
-          >
-            <div
-              onClick={() => {
-                data.likes?.length
-                  ? setVisible(true)
-                  : toast.error("На этом посте еще нет лайков", {
-                      style: { background: "#444", color: "#eee" },
-                    });
-                setIsHover(false);
-              }}
-              className={st.mutations__getLikesList}
-              style={{
-                borderRadius: `${canDelete ? "15px 15px 0 0" : "15px"}`,
-              }}
+      <div style={{ position: "relative" }}>
+        <AnimatePresence mode='wait'>
+          {isHover ? (
+            <motion.div
+              initial='from'
+              animate='to'
+              exit='from'
+              variants={MMenuPopUpAnimation}
+              className={st.mutations}
+              onMouseEnter={() => setIsHover(true)}
+              onMouseLeave={() => setIsHover(false)}
             >
-              <p className={st.mutations__likes}>
-                <FaHeart />
-              </p>
-              <button>Лайки</button>
-            </div>
-            {canDelete ? (
               <div
                 onClick={() => {
-                  setIsHover(false);
-                  deleteMutation.isLoading
-                    ? null
-                    : deleteMutation.mutateAsync({
-                        id: id,
-                        fileName: picture ? picture : "",
+                  data.likes?.length
+                    ? setVisible(true)
+                    : toast.error("На этом посте еще нет лайков", {
+                        style: { background: "#444", color: "#eee" },
                       });
+                  setIsHover(false);
                 }}
-                className={st.mutations__delete}
-                style={{ borderRadius: "0 0 15px 15px" }}
+                className={st.mutations__getLikesList}
+                style={{
+                  borderRadius: `${canDelete ? "15px 15px 0 0" : "15px"}`,
+                }}
               >
-                <p className={st.mutations__trash}>
-                  <IoTrashOutline />
+                <p className={st.mutations__likes}>
+                  <FaHeart />
                 </p>
-                <button>Удалить пост</button>
+                <button>Лайки</button>
               </div>
-            ) : (
-              ""
-            )}
-          </motion.div>
-        ) : (
-          ""
-        )}
-      </AnimatePresence>
+              {canDelete ? (
+                <div
+                  onClick={() => {
+                    setIsHover(false);
+                    deleteMutation.isLoading
+                      ? null
+                      : deleteMutation.mutateAsync({
+                          id: id,
+                          fileName: picture ? picture : "",
+                        });
+                  }}
+                  className={st.mutations__delete}
+                  style={{ borderRadius: "0 0 15px 15px" }}
+                >
+                  <p className={st.mutations__trash}>
+                    <IoTrashOutline />
+                  </p>
+                  <button>Удалить пост</button>
+                </div>
+              ) : (
+                ""
+              )}
+            </motion.div>
+          ) : (
+            ""
+          )}
+        </AnimatePresence>
+      </div>
       <Modal visible={visible} setVisible={setVisible}>
         <div>
           {isFetching ? (
-            <Loader />
+            <CirclesLoader />
           ) : data && data.likes?.length ? (
             <div className={st.likeUser__wrap}>
               {data.likes.map((user: IUser) => (

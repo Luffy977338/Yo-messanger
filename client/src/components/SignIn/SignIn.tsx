@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import AuthService from "../../../service/auth.service";
-import user from "../../../store/user";
+import AuthService from "../../service/auth.service";
+import user from "../../store/user";
 import st from "./sign-in.module.scss";
-import LoginInput from "../LoginInput/LoginInput";
+import LoginInput from "../UI/LoginInput/LoginInput";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 

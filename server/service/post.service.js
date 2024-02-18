@@ -11,6 +11,7 @@ const mongoose = require("mongoose");
 
 class PostService {
   async getAllPosts(page, perPage, reqUser) {
+    //! handles user access to see closed profile posts
     const posts = await postModel.aggregate([
       {
         $lookup: {
@@ -132,11 +133,11 @@ class PostService {
   }
 
   async createPost(userId, content, files) {
-    let pictures;
-    files ? (pictures = new Map(Object.entries(files))) : null;
-
     if (!content && !files) throw ApiError.BadRequest(ERROR.postCannotBeEmpty);
     if (!userId) throw ApiError.BadRequest(ERROR.expectedId);
+
+    let pictures;
+    files ? (pictures = new Map(Object.entries(files))) : null;
 
     const updatedFields = {
       userCreator: userId,

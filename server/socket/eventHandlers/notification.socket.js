@@ -2,35 +2,36 @@ const UserModel = require("../../models/user.model");
 const notificationService = require("../../service/notification.service");
 
 function NotificationHandler(socket, io) {
-  socket.on("comment", async ({ commentedUserId, commentedPostId, userId }) => {
-    const commentedUser = await UserModel.findById(commentedUserId);
+  socket.on("comment", async ({ toUserId, postId, userId, commentId }) => {
+    try {
+      const commentedUser = await UserModel.findById(toUserId);
 
-    if (commentedClient) {
-      const user = await UserModel.findById(userId);
-
-      commentedClient.emit("newNotification", {
-        user,
-        type: "comment",
-        isViewed: false,
+      const notification = await notificationService.newCommentNotification({
+        toUserId,
+        userId,
+        postId,
+        commentId,
       });
-    }
 
-    const notification = await notificationService.newNotification(
-      userId,
-      "comment",
-    );
-    return notification;
+      if (commentedUser.socketId) {
+        io.to(commentedUser.socketId).emit("newNotification", notification);
+      }
+
+      return notification;
+    } catch (e) {
+      console.log(e);
+    }
   });
 
-  socket.on("like", async ({ likedPostId, likedUserId, userId }) => {
+  socket.on("like", async ({ postId, toUserId, userId }) => {
     try {
-      const likedUser = await UserModel.findById(likedUserId);
-      const notification = await notificationService.newNotification(
-        likedPostId,
-        likedUserId,
+      const likedUser = await UserModel.findById(toUserId);
+
+      const notification = await notificationService.newLikeNotification({
+        postId,
+        toUserId,
         userId,
-        "like",
-      );
+      });
 
       if (likedUser.socketId) {
         io.to(likedUser.socketId).emit("newNotification", notification);
@@ -42,23 +43,25 @@ function NotificationHandler(socket, io) {
     }
   });
 
-  // socket.on("subscription", async ({ SubscriptionUserId, userId }) => {
-  //   const subscriptionClient = await socketClientModel.findById(
-  //     SubscriptionUserId,
-  //   );
+  socket.on("friendReq", async ({ toUserId, userId }) => {
+    try {
+      const friendRequestUser = await UserModel.findById(toUserId);
 
-  //   if (subscriptionClient) {
-  //     const user = await UserModel.findById(userId);
+      const notification =
+        await notificationService.newFriendRequestNotification({
+          toUserId,
+          userId,
+        });
 
-  //     subscriptionClient.emit("newNotification", {
-  //       user,
-  //       type: "subscription",
-  //       isViewed: false,
-  //     });
-  //   }
+      if (friendRequestUser.socketId) {
+        io.to(friendRequestUser.socketId).emit("newNotification", notification);
+      }
 
-  //   return notificationService.newNotification(userId, "subscription");
-  // });
+      return notification.populate("user");
+    } catch (e) {
+      console.log(e);
+    }
+  });
 }
 
 module.exports = NotificationHandler;

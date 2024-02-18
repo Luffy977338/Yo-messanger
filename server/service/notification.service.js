@@ -20,17 +20,47 @@ class NotificationService {
     return notifications;
   }
 
-  async newNotification(postId, toUserId, userId, type) {
+  async makeNotificationViewed(notifId) {
+    const notification = await notificationModel.findByIdAndUpdate(
+      notifId,
+      { isViewed: true },
+      { new: true },
+    );
+
+    if (!notification) throw ApiError.NotFound(ERROR.notificationNotFound);
+
+    return await notification.populate("user post");
+  }
+
+  async deleteNotificationsByPostId(postId) {
+    const notification = await notificationModel.deleteMany({
+      post: postId,
+    });
+
+    return notification;
+  }
+
+  async newLikeNotification({ toUserId, userId, postId }) {
+    if (!toUserId || !userId || !postId)
+      throw ApiError.BadRequest(ERROR.expectedId);
+
+    if (toUserId === userId)
+      throw ApiError.BadRequest(
+        ERROR.notificationCannotBeSentToTheSameIdAsTheSender,
+      );
+
     const user = await UserModel.findById(userId);
-    const post = await postModel.findById(postId);
 
     if (!user) throw ApiError.NotFound(ERROR.userNotFound);
+
+    const post = await postModel.findById(postId);
+
     if (!post) throw ApiError.NotFound(ERROR.postNotFound);
 
     const isNotificationExist = await notificationModel.findOne({
       user: userId,
       post: postId,
-      type,
+      type: "like",
     });
 
     if (isNotificationExist)
@@ -38,9 +68,9 @@ class NotificationService {
 
     const notification = await notificationModel.create({
       user: userId,
-      type: type,
+      type: "like",
       isViewed: false,
-      post: postId ? postId : null,
+      post: postId,
     });
 
     await UserModel.updateOne(
@@ -61,24 +91,88 @@ class NotificationService {
     });
   }
 
-  async makeNotificationViewed(notifId) {
-    const notification = await notificationModel.findByIdAndUpdate(
-      notifId,
-      { isViewed: true },
-      { new: true },
-    );
+  async newCommentNotification({ toUserId, userId, postId, commentId }) {
+    if (!toUserId || !userId || !postId || !commentId)
+      throw ApiError.BadRequest(ERROR.expectedId);
 
-    if (!notification) throw ApiError.NotFound(ERROR.notificationNotFound);
+    if (toUserId === userId)
+      throw ApiError.BadRequest(
+        ERROR.notificationCannotBeSentToTheSameIdAsTheSender,
+      );
 
-    return await notification.populate("user post");
-  }
+    const user = await UserModel.findById(userId);
 
-  async deleteNotificationsByPostId(postId) {
-    const notification = await notificationModel.deleteMany({
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
+
+    const post = await postModel.findById(postId);
+
+    if (!post) throw ApiError.NotFound(ERROR.postNotFound);
+
+    const notification = await notificationModel.create({
+      user: userId,
+      type: "comment",
+      isViewed: false,
       post: postId,
+      comment: commentId,
     });
 
-    return notification;
+    await UserModel.updateOne(
+      { _id: toUserId },
+      {
+        $push: {
+          notifications: {
+            $each: [notification],
+            $position: 0,
+          },
+        },
+      },
+    );
+
+    return (await notification.populate("user post comment")).populate({
+      path: "post",
+      populate: "userCreator comments",
+    });
+  }
+
+  async newFriendRequestNotification({ toUserId, userId }) {
+    if (!toUserId || !userId) throw ApiError.BadRequest(ERROR.expectedId);
+
+    if (toUserId === userId)
+      throw ApiError.BadRequest(
+        ERROR.notificationCannotBeSentToTheSameIdAsTheSender,
+      );
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
+
+    const isNotificationExist = await notificationModel.findOne({
+      user: userId,
+      type: "friendReq",
+    });
+
+    if (isNotificationExist)
+      throw ApiError.BadRequest(ERROR.notificationAlreadyExist);
+
+    const notification = await notificationModel.create({
+      user: userId,
+      type: "friendReq",
+      isViewed: false,
+    });
+
+    await UserModel.updateOne(
+      { _id: toUserId },
+      {
+        $push: {
+          notifications: {
+            $each: [notification],
+            $position: 0,
+          },
+        },
+      },
+    );
+
+    return await notification.populate("user");
   }
 }
 

@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import AuthService from "../../../service/auth.service";
-import user from "../../../store/user";
-import LoginInput from "../LoginInput/LoginInput";
+import AuthService from "../../service/auth.service";
+import user from "../../store/user";
+import LoginInput from "../UI/LoginInput/LoginInput";
 import st from "./sign-up.module.scss";
 import toast from "react-hot-toast";
 

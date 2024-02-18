@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const notificationTypes = ["like", "comment", "subscription"];
+const notificationTypes = ["like", "comment", "friendReq"];
 
 const NotificationShema = new Schema(
   {
@@ -8,6 +8,7 @@ const NotificationShema = new Schema(
     type: { type: String, required: true, enum: notificationTypes },
     isViewed: { type: Boolean, required: true },
     post: { type: Schema.Types.ObjectId, ref: "Post" },
+    comment: { type: Schema.Types.ObjectId, ref: "Comment" },
   },
   { timestamps: true },
 );

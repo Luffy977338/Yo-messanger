@@ -1,13 +1,13 @@
 import st from "./user-banner.module.scss";
-import Friendship from "../../Friendship/Friendship";
-import user from "../../../store/user";
+import Friendship from "../Friendship/Friendship";
+import user from "../../store/user";
 import { observer } from "mobx-react-lite";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import Modal from "../Modal/Modal";
-import SendMessageByBanner from "../../SendMessageByBanner/SendMessageByBanner";
+import SendMessageByBanner from "../SendMessageByBanner/SendMessageByBanner";
 import { useQuery } from "@tanstack/react-query";
-import $api from "../../../http";
+import $api from "../../http";
 
 const UserBanner = () => {
   const { id } = useParams();

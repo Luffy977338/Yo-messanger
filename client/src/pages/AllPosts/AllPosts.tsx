@@ -10,6 +10,7 @@ import user from "../../store/user";
 import LoadPost from "../../components/UI/LoadPost/LoadPost";
 import React from "react";
 import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
+import CirclesLoader from "../../components/UI/CirclesLoader/CirclesLoader";
 
 const AllPosts = () => {
   const [queryKey, setQueryKey] = React.useState(["posts", Date.now()]);
@@ -60,6 +61,13 @@ const AllPosts = () => {
               </React.Fragment>
             ))}
           </div>
+        )}
+        {hasNextPage ? (
+          <div style={{ marginTop: 35 }}>
+            <CirclesLoader />
+          </div>
+        ) : (
+          ""
         )}
       </div>
       <div>

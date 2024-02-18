@@ -1,11 +1,11 @@
 import { useState } from "react";
-import user from "../../../store/user";
+import user from "../../store/user";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import st from "./like-button.module.scss";
-import { IUser } from "../../../interfaces/user.interface";
+import { IUser } from "../../interfaces/user.interface";
 import { observer } from "mobx-react-lite";
-import { useLike, useRemoveLike } from "../../../hooks/PostHooks";
-import { useCreateNewNotification } from "../../../hooks/NotificationsHooks";
+import { useLike, useRemoveLike } from "../../hooks/PostHooks";
+import { useCreateNewNotification } from "../../hooks/NotificationsHooks";
 
 const LikeButton = ({
   postId,
@@ -29,8 +29,8 @@ const LikeButton = ({
     setIsLiked(true);
     if (userCreator._id !== user.user._id) {
       createNotification("like", {
-        likedPostId: postId,
-        likedUserId: userCreator._id,
+        postId: postId,
+        toUserId: userCreator._id,
         userId: user.user._id,
       });
     }

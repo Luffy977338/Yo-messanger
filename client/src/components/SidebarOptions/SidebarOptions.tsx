@@ -6,7 +6,7 @@ import {
 } from "react";
 import { IPath } from "../../interfaces/SideBarPaths";
 import { pathsIcons } from "../../constants/sidebarPaths";
-import Modal from "../UI/Modal/Modal";
+import Modal from "../Modal/Modal";
 import st from "./sidebar-options.module.scss";
 import SidebarCheckbox from "../UI/SidebarCheckbox/SidebarCheckbox";
 

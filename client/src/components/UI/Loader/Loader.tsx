@@ -1,7 +1,10 @@
+import { FC, HTMLProps } from "react";
 import st from "./loader.module.scss";
 
-const Loader = () => {
-   return <div className={st.spinner}></div>;
+interface LoaderProps extends HTMLProps<HTMLDivElement> {}
+
+const Loader: FC<LoaderProps> = ({ ...options }) => {
+  return <div {...options} className={st.spinner}></div>;
 };
 
 export default Loader;

@@ -23,13 +23,13 @@ class UserAuthService {
         candidateUser;
 
       if (!candidateEmail.isActivated) {
-        console.log("update");
         await userModel.findOneAndUpdate(
           { email: googleUser.email },
           {
             isActivated: true,
             password: generateRandomPassword(10),
             avatar: googleUser.avatar,
+            username: googleUser.username,
           },
           { new: true },
         );

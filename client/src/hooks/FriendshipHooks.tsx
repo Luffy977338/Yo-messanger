@@ -1,11 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserService from "../service/user-friendship.service";
+import { useCreateNewNotification } from "./NotificationsHooks";
 
 export function useSubscribe(id: string) {
   const queryClient = useQueryClient();
+  const createNotification = useCreateNewNotification();
   return useMutation(() => UserService.subscribe(id), {
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       queryClient.invalidateQueries(["friends"]);
+      console.log(data);
+      createNotification("friendReq", {
+        toUserId: id,
+        userId: data.subscriber._id,
+      });
     },
   });
 }

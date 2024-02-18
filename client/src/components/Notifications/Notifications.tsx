@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { MPopUpAnimation } from "../../animations/PopUp.animation";
 import { INotification } from "../../interfaces/notification.interface";
 import st from "./notifications.module.scss";
-import Notification from "../UI/Notification/Notification";
+import Notification from "../Notification/Notification";
 import { IoNotificationsOutline } from "react-icons/io5";
 import {
   useGetNotifications,
@@ -80,11 +80,7 @@ const Notifications = () => {
             {notifications.length ? (
               <>
                 {notifications.map((n, index) =>
-                  index <= 7 ? (
-                    <Notification key={index} notification={n} />
-                  ) : (
-                    ""
-                  ),
+                  index <= 7 ? <Notification key={index} notif={n} /> : "",
                 )}
                 {notifications.length > 7 ? (
                   <button
