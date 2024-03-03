@@ -8,18 +8,31 @@ const UserModel = require("../models/user.model");
 const fileService = require("./file.service");
 const path = require("path");
 const ClosedUserDto = require("../dtos/closed-user.dto");
+const userModel = require("../models/user.model");
 
 class UserService {
   async editProfile(id, username, description, avatar, prevAvatar) {
     let updatedFields = {};
 
-    if (!username && !description) {
+    if (!username && !description)
       throw ApiError.BadRequest(ERROR.noInformation);
-    }
 
-    if (username.includes(" ")) {
+    if (username.includes(" "))
       throw ApiError.BadRequest(ERROR.usernameMustHaveNoSpaces);
-    }
+
+    const user = await userModel.findById(id);
+
+    if (!user) throw ApiError.NotFound(ERROR.userNotFound);
+
+    const candidateUsername = await userModel.findOne({
+      username,
+    });
+
+    if (
+      candidateUsername?.username &&
+      candidateUsername.username !== user.username
+    )
+      throw ApiError.BadRequest(ERROR.usernameAlreadyUse);
 
     updatedFields.username = username;
     updatedFields.description = description;

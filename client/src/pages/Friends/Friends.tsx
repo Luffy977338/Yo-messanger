@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import $api from "../../http";
 import Loader from "../../components/UI/Loader/Loader";
 import { IUser } from "../../interfaces/user.interface";
+import { Helmet } from "react-helmet";
 
 const Friends = () => {
   const { id } = useParams();
@@ -44,6 +45,7 @@ const Friends = () => {
 
   return (
     <div className={st.friends__wrap}>
+      <Helmet title='Друзья | Yo' />
       <nav className={st.panel__navigation}>
         <div
           className={`${st.panel__background} ${

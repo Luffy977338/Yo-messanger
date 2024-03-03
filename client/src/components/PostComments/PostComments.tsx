@@ -7,13 +7,16 @@ import {
   Fragment,
 } from "react";
 import { useComment, useGetComments } from "../../hooks/CommentHooks";
-import { IComment } from "../../interfaces/comment.interface";
 import st from "./post-comments.module.scss";
 import user from "../../store/user";
 import Comment from "../Comment/Comment";
 import Input from "../UI/Input/Input";
 import { IoSend } from "react-icons/io5";
 import Loader from "../UI/Loader/Loader";
+import { useTreeLength } from "../../hooks/useTreeLength";
+import { IComment } from "../../interfaces/comment.interface";
+import CirclesLoader from "../UI/CirclesLoader/CirclesLoader";
+import { QueryKey } from "@tanstack/react-query";
 
 const PostComments = ({
   postId,
@@ -25,9 +28,19 @@ const PostComments = ({
   const [comments, setComments] = useState<IComment[]>([]);
   const [message, setMessage] = useState<string>("");
   const [pictures, setPictures] = useState<File[]>([]);
+  const [queryKey, setQueryKey] = useState<QueryKey>([Date.now()]);
 
-  const { isFetching } = useGetComments(postId, setComments);
+  useEffect(() => {
+    setQueryKey([Date.now()]);
+  }, []);
+
+  const { isFetching, isLoading } = useGetComments(
+    postId,
+    setComments,
+    queryKey,
+  );
   const comment = useComment(postId);
+  const treeLength = useTreeLength(comments, "replies");
 
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,18 +56,31 @@ const PostComments = ({
 
   useEffect(() => {
     if (!isFetching) {
-      setCommentsCount(comments.length);
+      setCommentsCount(treeLength);
     }
-  }, [comments, setCommentsCount]);
+  }, [comments, setCommentsCount, treeLength]);
 
   return (
     <div className={st.postComments}>
       <div className={st.comments}>
-        {comments?.map((com) => (
-          <Fragment key={com._id}>
-            <Comment style={{ marginBottom: "25px" }} comment={com} />
-          </Fragment>
-        ))}
+        {isLoading ? (
+          <div>
+            <CirclesLoader />
+          </div>
+        ) : (
+          <>
+            {!!comments.length &&
+              comments?.map((com) => (
+                <Fragment key={com._id}>
+                  <Comment
+                    style={{ paddingBottom: "20px" }}
+                    comment={com}
+                    comments={comments}
+                  />
+                </Fragment>
+              ))}
+          </>
+        )}
       </div>
       <div className={st.input}>
         <img src={user.user.avatar} alt='' />
@@ -68,7 +94,12 @@ const PostComments = ({
           />
           <button
             className={st.sendButton}
-            disabled={comment.isLoading}
+            disabled={comment.isLoading || (!message && !pictures.length)}
+            style={
+              !message && !pictures.length
+                ? { color: "#474747", cursor: "default" }
+                : {}
+            }
             type='submit'
           >
             {comment.isLoading ? (

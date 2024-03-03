@@ -1,0 +1,45 @@
+.input {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 20px;
+
+  img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+
+  .form {
+    display: flex;
+    width: 100%;
+    margin-left: 10px;
+
+    &__input {
+      width: 100%;
+    }
+
+    &__sendButton {
+      padding: 7px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      color: grey;
+      cursor: pointer;
+      transition: all 0.15s;
+
+      &:hover {
+        color: rgb(148, 148, 148);
+      }
+
+      .loader {
+        transform: scale(0.5) translateY(-15px) translateX(-10px);
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}

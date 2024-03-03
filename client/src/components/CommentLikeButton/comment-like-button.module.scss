@@ -1,0 +1,23 @@
+.like {
+  border: none;
+  transition: 0.1s all;
+  background: none;
+  color: grey;
+  cursor: pointer;
+  font-size: 18px;
+  outline: none;
+
+  &:hover {
+    color: rgb(154, 154, 154);
+  }
+
+  p {
+    font-size: 18px;
+    font-family: "Arial", sans-serif;
+  }
+}
+
+.wrap {
+  display: flex;
+  gap: 5px;
+}

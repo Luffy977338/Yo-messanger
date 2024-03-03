@@ -34,14 +34,13 @@ export function useDeletePost(beforeDelete?: Function) {
 
 export function useLike(
   postId: string,
-  likes: number,
   setLikes: React.Dispatch<React.SetStateAction<number>>,
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
   return useMutation(() => PostService.likePost(postId), {
     onError: () => {
-      setLikes(likes - 1);
+      setLikes((prev) => prev - 1);
       setIsLiked(false);
     },
     onSuccess: () => {
@@ -52,14 +51,13 @@ export function useLike(
 
 export function useRemoveLike(
   postId: string,
-  likes: number,
   setLikes: React.Dispatch<React.SetStateAction<number>>,
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const queryClient = useQueryClient();
   return useMutation(() => PostService.removeLikePost(postId), {
     onError: () => {
-      setLikes(likes + 1);
+      setLikes((prev) => prev + 1);
       setIsLiked(true);
     },
     onSuccess: () => {

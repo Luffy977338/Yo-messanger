@@ -13,6 +13,7 @@ import { useGetUserPosts } from "../../hooks/PostHooks";
 import { IPost } from "../../interfaces/post.interface";
 import { useUser } from "../../hooks/useUser";
 import ProfileClosed from "../../components/UI/ProfileClosed/ProfileClosed";
+import { Helmet } from "react-helmet";
 
 type profileClosedError = { response: { data: { closedProfile: boolean } } };
 
@@ -64,6 +65,7 @@ const UserPosts = () => {
                 <LoadPost />
               ) : (
                 <div className={st.userPosts}>
+                  <Helmet title={`${userData?.username} | Yo`} />
                   {(() => {
                     if (error?.response.data.closedProfile) {
                       return <ProfileClosed username={userData?.username} />;

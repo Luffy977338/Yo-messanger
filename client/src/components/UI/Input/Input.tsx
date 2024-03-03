@@ -1,4 +1,4 @@
-import { FC, InputHTMLAttributes, forwardRef } from "react";
+import React, { InputHTMLAttributes, forwardRef } from "react";
 import st from "./input.module.scss";
 import { SlCamera } from "react-icons/sl";
 
@@ -6,11 +6,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   handlePictureChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Input: FC<InputProps> = forwardRef(
-  ({ handlePictureChange, ...options }) => {
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ handlePictureChange, ...props }, ref) => {
     return (
       <div className={st.input}>
-        <input {...options} className={st.input__message} />
+        <input ref={ref} {...props} className={st.input__message} />
         <input
           className={st.input__picture}
           name='picture'

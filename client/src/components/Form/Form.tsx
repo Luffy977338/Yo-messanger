@@ -33,6 +33,8 @@ const Form = ({
   const handleForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!content && !pictures.length) return;
+
     const formData = new FormData();
     formData.append("content", content);
     if (pictures) {

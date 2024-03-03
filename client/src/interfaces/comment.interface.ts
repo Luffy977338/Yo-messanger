@@ -6,6 +6,9 @@ export interface IComment {
   post: IPost;
   user: IUser;
   likes: IUser[];
+  replies: IComment[];
+  createdAt: Date;
+  reply: IComment | null;
   message?: string;
   pictures?: string[];
 }

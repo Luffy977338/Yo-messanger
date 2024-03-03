@@ -2,35 +2,27 @@ import { useState } from "react";
 import user from "../../store/user";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import st from "./like-button.module.scss";
-import { IUser } from "../../interfaces/user.interface";
 import { observer } from "mobx-react-lite";
 import { useLike, useRemoveLike } from "../../hooks/PostHooks";
 import { useCreateNewNotification } from "../../hooks/NotificationsHooks";
+import { IPost } from "../../interfaces/post.interface";
 
-const LikeButton = ({
-  postId,
-  postLikes,
-  userCreator,
-}: {
-  postId: string;
-  postLikes: string[];
-  userCreator: IUser;
-}) => {
+const LikeButton = ({ post }: { post: IPost }) => {
   const [isLiked, setIsLiked] = useState<boolean>(
-    postLikes.includes(user.user._id),
+    post.likes.includes(user.user._id),
   );
-  const [likes, setLikes] = useState<number>(postLikes.length);
-  const like = useLike(postId, likes, setLikes, setIsLiked);
-  const removeLike = useRemoveLike(postId, likes, setLikes, setIsLiked);
+  const [likes, setLikes] = useState<number>(post.likes.length);
+  const like = useLike(post._id, setLikes, setIsLiked);
+  const removeLike = useRemoveLike(post._id, setLikes, setIsLiked);
   const createNotification = useCreateNewNotification();
 
   const handleLike = () => {
     setLikes((prev) => prev + 1);
     setIsLiked(true);
-    if (userCreator._id !== user.user._id) {
+    if (post.userCreator._id !== user.user._id) {
       createNotification("like", {
-        postId: postId,
-        toUserId: userCreator._id,
+        postId: post._id,
+        toUserId: post.userCreator._id,
         userId: user.user._id,
       });
     }
@@ -42,7 +34,7 @@ const LikeButton = ({
   };
 
   return (
-    <div
+    <button
       className={[st.like, isLiked ? st.like__active : ""].join(" ")}
       onClick={() => {
         isLiked ? handleRemoveLike() : handleLike();
@@ -61,7 +53,7 @@ const LikeButton = ({
         )}
         <p>{likes}</p>
       </div>
-    </div>
+    </button>
   );
 };
 

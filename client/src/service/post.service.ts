@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import $api from "../http";
 
 export default class PostService {
-  static async getAllUserPosts({ pageParam = 1 }, userId?: string) {
+  static async getAllUserPosts({ pageParam = 0 }, userId?: string) {
     const response = await $api.get(`/posts/user/${userId}?page=${pageParam}`);
     return response.data;
   }
@@ -20,7 +20,7 @@ export default class PostService {
   }
 
   static async removeLikePost(postId: string): Promise<AxiosResponse<any>> {
-    return $api.delete(`/posts/removeLike/${postId}`);
+    return $api.delete(`/posts/like/${postId}`);
   }
 
   static async createPost(newPost: any): Promise<AxiosResponse<any>> {

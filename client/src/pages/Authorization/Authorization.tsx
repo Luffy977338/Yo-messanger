@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import st from "./authorization.module.scss";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
 const Authorization = () => {
   const path = useNavigate();
@@ -14,6 +15,7 @@ const Authorization = () => {
 
   return (
     <div className={st.authorization}>
+      <Helmet title='Авторизация | Yo' />
       <div className={st.wrap}>
         <div className={st.login__form_wrap}>
           <LoginForm />

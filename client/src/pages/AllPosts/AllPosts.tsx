@@ -11,6 +11,7 @@ import LoadPost from "../../components/UI/LoadPost/LoadPost";
 import React from "react";
 import { useInfiniteQueryScrolling } from "../../hooks/useInfiniteScrolling";
 import CirclesLoader from "../../components/UI/CirclesLoader/CirclesLoader";
+import { Helmet } from "react-helmet";
 
 const AllPosts = () => {
   const [queryKey, setQueryKey] = React.useState(["posts", Date.now()]);
@@ -43,6 +44,7 @@ const AllPosts = () => {
 
   return (
     <div style={{ display: "flex" }}>
+      <Helmet title='Новости | Yo' />
       <div className={st.all}>
         <Form setQueryKey={setQueryKey} isLoading={isLoading} />
         {isLoading ? (

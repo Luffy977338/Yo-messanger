@@ -1,68 +1,77 @@
-import { FC, HTMLProps } from "react";
+import { FC, HTMLProps, useRef, useState } from "react";
 import { IComment } from "../../interfaces/comment.interface";
 import st from "./comment.module.scss";
-import user from "../../store/user";
-import { useDeleteComment } from "../../hooks/CommentHooks";
-import { RxCross2 } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
+import CommentReplyForm from "./../CommentReplyForm/CommentReplyForm";
+import CommentContent from "../CommentContent/CommentContent";
+import CommentReplies from "../CommentReplies/CommentReplies";
 
 interface CommentProps extends HTMLProps<HTMLDivElement> {
   comment: IComment;
+  comments: IComment[];
 }
 
-const Comment: FC<CommentProps> = ({
-  comment,
-  ...options
-}: {
-  comment: IComment;
-}) => {
-  const canDelete =
-    comment.post.userCreator._id === user.user._id ||
-    comment.user._id === user.user._id;
+const Comment: FC<CommentProps> = ({ comment, comments, ...options }) => {
+  const [isReply, setIsReply] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const isFirstComment = comments[0] === comment;
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const commentRef = useRef<HTMLDivElement>(null);
 
   const path = useNavigate();
 
-  const deleteComment = useDeleteComment();
-
   return (
-    <div {...options} className={st.comment}>
-      <div className={st.comment__main}>
-        <img
-          className={st.comment__avatar}
-          src={comment.user.avatar}
-          alt=''
-          onClick={() => path(`/${comment.user._id}`)}
-        />
-        <div className={st.comment__content}>
-          <div
-            className={st.comment__content_username}
+    <>
+      <div ref={commentRef} {...options} className={st.comment}>
+        <div>
+          <img
+            style={isFirstComment ? { transform: "translateY(0)" } : {}}
+            className={st.comment__avatar}
+            src={comment.user.avatar}
+            alt=''
             onClick={() => path(`/${comment.user._id}`)}
-          >
-            {comment.user.username}
+          />
+        </div>
+        <CommentContent
+          style={{
+            borderTop: !isFirstComment
+              ? "1px solid var(--primary-color)"
+              : "none",
+            paddingTop: !isFirstComment ? "20px" : "0",
+          }}
+          mainSt={st}
+          setIsReply={setIsReply}
+          setMessage={setMessage}
+          formRef={formRef}
+          inputRef={inputRef}
+          comment={comment}
+        />
+      </div>
+      <div>
+        <div>
+          <CommentReplies
+            comment={comment}
+            commentRef={commentRef}
+            inputRef={inputRef}
+            formRef={formRef}
+            setMessage={setMessage}
+            setIsReply={setIsReply}
+          />
+          <div style={{ paddingLeft: 52 }}>
+            <CommentReplyForm
+              message={message}
+              setMessage={setMessage}
+              comment={comment}
+              formRef={formRef}
+              inputRef={inputRef}
+              isReply={isReply}
+            />
           </div>
-          <div className={st.comment__content_message}>{comment.message}</div>
-          <div className={st.comment__content_message}>{comment.pictures}</div>
         </div>
       </div>
-      <div className={st.options}>
-        {canDelete ? (
-          <div className={st.comment__delete}>
-            <button
-              title='Удалить'
-              className={st.comment__delete_button}
-              disabled={deleteComment.isLoading}
-              onClick={() => {
-                canDelete ? deleteComment.mutateAsync(comment._id) : null;
-              }}
-            >
-              <RxCross2 />
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 

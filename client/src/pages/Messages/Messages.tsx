@@ -9,6 +9,7 @@ import ChatTop from "../../components/ChatTop/ChatTop";
 import ChatUsersList from "../../components/ChatUsersList/ChatUsersList";
 import socket from "../../store/socket";
 import { observer } from "mobx-react-lite";
+import { Helmet } from "react-helmet";
 
 const Messages = () => {
   const location = useLocation();
@@ -73,6 +74,7 @@ const Messages = () => {
 
   return (
     <div className={st.chat}>
+      <Helmet title='Сообщения | Yo' />
       <ChatUsersList username={usernameSearch} messages={messages} />
       {userIdSearch ? (
         <div className={st.chat__messages}>

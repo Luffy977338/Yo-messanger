@@ -4,8 +4,15 @@
   height: 600px;
   width: 520px;
   overflow: hidden;
-  background: rgba(60, 60, 60, 0.194);
   border-radius: 15px;
+
+  &__background {
+    object-fit: cover;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    filter: blur(45px);
+  }
 
   &:hover &__leftButton,
   &:hover &__rightButton {
@@ -15,6 +22,7 @@
   &__leftButton,
   &__rightButton {
     opacity: 0;
+    z-index: 6;
     position: absolute;
     padding: 0 65px;
     background: none;
@@ -45,7 +53,7 @@
   }
 
   &__picture {
-    display: flex;
+    z-index: 5;
     align-items: center;
     justify-content: center;
     width: 100%;

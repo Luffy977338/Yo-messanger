@@ -2,7 +2,9 @@
   background: var(--primary-color);
   display: inline-flex;
   cursor: pointer;
+  color: var(--secondary-color);
   user-select: none;
+  border: none;
   justify-content: center;
   padding: 6px 18px;
   border-radius: 30px;
@@ -12,6 +14,7 @@
   .wrap {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 
     p {
@@ -23,6 +26,8 @@
   &__filled,
   &__outlined {
     font-size: 22px;
+    display: flex;
+    align-items: center;
   }
 }
 

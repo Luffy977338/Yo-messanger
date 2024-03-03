@@ -13,11 +13,16 @@ const verifyGoogleToken = require("../utils/verifyGoogleToken.js");
 const generateRandomPassword = require("../utils/getRandomPassword.js");
 const userModel = require("../models/user.model.js");
 const ERROR = require("../constants/ERROR.js");
+const generateRandomNumbers = require("../utils/getRandomNumbers.js");
 
 class UserAuthService {
   async googleAuth(googleToken) {
     const googleUser = await verifyGoogleToken(googleToken);
     const candidateUser = await userService.getUserByEmail(googleUser.email);
+    const usernameCandidate = await userModel.findOne({
+      username: googleUser.username,
+    });
+
     if (candidateUser) {
       const { user: candidateEmail, userAuth: candidateEmailAuth } =
         candidateUser;
@@ -29,7 +34,9 @@ class UserAuthService {
             isActivated: true,
             password: generateRandomPassword(10),
             avatar: googleUser.avatar,
-            username: googleUser.username,
+            username: usernameCandidate?.username
+              ? `${googleUser.username}_${generateRandomNumbers(8)}`
+              : googleUser.username,
           },
           { new: true },
         );
@@ -48,7 +55,9 @@ class UserAuthService {
 
     const user = await UserModel.create({
       avatar: googleUser.avatar,
-      username: googleUser.username,
+      username: usernameCandidate?.username
+        ? `${googleUser.username}_${generateRandomNumbers(8)}`
+        : googleUser.username,
       email: googleUser.email,
       password: hashPassword,
       isActivated: true,
@@ -65,6 +74,10 @@ class UserAuthService {
 
   async registration(username, email, password) {
     const candidateUser = await UserModel.findOne({ email });
+    const candidateUsername = await UserModel.findOne({ username });
+
+    if (candidateUsername) throw ApiError.BadRequest(ERROR.usernameAlreadyUse);
+
     if (candidateUser) {
       if (candidateUser.isActivated) {
         throw ApiError.BadRequest("Пользователь с такой почтой уже существует");

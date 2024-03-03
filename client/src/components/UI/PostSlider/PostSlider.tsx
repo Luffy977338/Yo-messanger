@@ -21,6 +21,12 @@ const PostSlider = ({ pictures }: { pictures: string[] | [] }) => {
       {!!pictures.length ? (
         <>
           <div className={st.pictures}>
+            <img
+              className={st.pictures__background}
+              src={`${import.meta.env.VITE_REACT_APP_API_URL}/${
+                pictures[currentSlide]
+              }`}
+            />
             {pictures.length !== 1 && (
               <button
                 className={st.pictures__leftButton}

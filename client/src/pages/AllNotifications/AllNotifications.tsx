@@ -4,12 +4,14 @@ import Notification from "../../components/Notification/Notification";
 import st from "./all-notifications.module.scss";
 import { observer } from "mobx-react-lite";
 import { useGetNotifications } from "../../hooks/NotificationsHooks";
+import { Helmet } from "react-helmet";
 
 const AllNotifications = () => {
   const { isLoading, data } = useGetNotifications();
 
   return (
     <>
+      <Helmet title='Уведомления | Yo' />
       {isLoading ? (
         <Loader />
       ) : data ? (

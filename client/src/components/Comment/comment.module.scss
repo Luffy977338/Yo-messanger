@@ -1,7 +1,7 @@
 .comment {
   display: flex;
-  justify-content: space-between;
   width: 100%;
+  transition: 0.1s all;
 
   &:hover {
     .comment__delete {
@@ -9,17 +9,19 @@
         opacity: 1;
       }
     }
+
+    .like {
+      opacity: 1;
+    }
   }
 
-  &__main {
-    display: flex;
-    word-wrap: break-word;
-    overflow: hidden;
+  .like {
+    opacity: 0;
+    transition: 0.1s all;
   }
 
   &__delete {
     display: flex;
-    align-items: flex-start;
 
     &_button {
       border: none;
@@ -36,30 +38,21 @@
     }
   }
 
-  &__content {
-    overflow: hidden;
-
-    &_username {
-      font-size: 20px;
-      margin-bottom: 10px;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    &_message {
-      font-size: 16px;
-      margin-left: 5px;
-    }
-  }
-
   &__avatar {
     width: 42px;
     height: 42px;
     border-radius: 50%;
     margin-right: 10px;
     cursor: pointer;
+    transform: translateY(15px);
+
+    &_reply {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 10px;
+      cursor: pointer;
+      transform: translateY(15px);
+    }
   }
 }

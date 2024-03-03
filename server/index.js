@@ -16,6 +16,7 @@ const WebsocketSetUp = require("./socket/connection.socket.js");
 const settingRouter = require("./router/settings.router.js");
 const notificationRouter = require("./router/notification.router.js");
 const commentRouter = require("./router/comment.router.js");
+const helmet = require("helmet");
 
 const PORT = process.env.PORT || 5000;
 
@@ -27,6 +28,7 @@ const io = socketIo(server, {
   },
 });
 
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(fileUpload());
@@ -46,6 +48,7 @@ app.use("/settings", settingRouter);
 app.use(userFriendshipRouter);
 app.use(userRouter);
 app.use(errorMiddleware);
+
 WebsocketSetUp(io);
 
 const start = async () => {

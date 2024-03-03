@@ -11,8 +11,16 @@ const mongoose = require("mongoose");
 
 class PostService {
   async getAllPosts(page, perPage, reqUser) {
-    //! handles user access to see closed profile posts
+    //! handles user access to see closed profile posts and return posts
     const posts = await postModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "post",
+          as: "comments",
+        },
+      },
       {
         $lookup: {
           from: "users",
@@ -72,6 +80,10 @@ class PostService {
       },
     ]);
 
+    posts.forEach((post) => {
+      post.comments = post.comments.filter((comment) => comment.reply === null);
+    });
+
     const totalCount = await postModel.countDocuments();
     const totalPages = Math.ceil(totalCount / perPage);
 
@@ -89,10 +101,15 @@ class PostService {
       .populate("settings")
       .populate({
         path: "posts",
-        populate: {
-          path: "userCreator",
-          populate: [{ path: "settings" }, { path: "friends" }],
-        },
+        populate: [
+          {
+            path: "userCreator",
+            populate: [{ path: "settings" }, { path: "friends" }],
+          },
+          {
+            path: "comments",
+          },
+        ],
         options: {
           skip: perPage * page,
           limit: perPage,

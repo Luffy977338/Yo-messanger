@@ -1,5 +1,6 @@
 const ERROR = {
   userNotFound: "Такого пользователя не существует",
+  usernameAlreadyUse: "Имя уже занято",
   requiredField: "Поле обязательно",
   notificationNotFound: "Такого уведомления не существует",
   commentNotFound: "Такого комментария не существует",

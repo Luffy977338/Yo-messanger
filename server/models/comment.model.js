@@ -7,6 +7,8 @@ const CommentSchema = new Schema(
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     message: { type: String },
     pictures: [{ type: String }],
+    replies: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+    reply: { type: Schema.Types.ObjectId, ref: "Comment" },
   },
   { timestamps: true },
 );

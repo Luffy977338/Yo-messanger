@@ -1,7 +1,7 @@
 .input {
-  display: inline-flex;
+  display: flex;
   width: 100%;
-  margin-top: 25px;
+  margin-top: 10px;
 
   img {
     width: 42px;
@@ -26,12 +26,12 @@
       justify-content: center;
       border: none;
       background: none;
-      color: grey;
+      color: gray;
       cursor: pointer;
       transition: all 0.15s;
 
       &:hover {
-        color: rgb(148, 148, 148);
+        color: rgb(171, 170, 170);
       }
 
       .loader {

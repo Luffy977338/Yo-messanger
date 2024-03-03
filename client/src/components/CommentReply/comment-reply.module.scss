@@ -1,0 +1,41 @@
+.comment {
+  display: flex;
+  width: 100%;
+  transition: 0.1s all;
+  border-top: 1px solid var(--primary-color);
+
+  &:hover {
+    .comment__delete {
+      &_button {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__delete {
+    display: flex;
+
+    &_button {
+      border: none;
+      transition: 0.1s all;
+      opacity: 0;
+      background: none;
+      color: grey;
+      cursor: pointer;
+      font-size: 18px;
+
+      &:hover {
+        color: rgb(154, 154, 154);
+      }
+    }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    transform: translateY(15px);
+    cursor: pointer;
+  }
+}
